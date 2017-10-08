@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation=" http://java.sun.com/xml/ns/j2ee  http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd">
+
+	<display-name>Night's Watch</display-name>
+	<description>
+  Night gathers, and now my watch begins.
+  It shall not end until my death.
+  I shall take no wife, hold no lands, father no children.
+  I shall wear no crowns and win no glory.
+  I shall live and die at my post.
+  I am the sword in the darkness.
+  I am the watcher on the walls.
+  I am the fire that burns against the cold, the light that brings the dawn, the horn that wakes the sleepers, the shield that guards the realms of men.
+  I pledge my life and honor to the Night's Watch, for this night and all the nights to come.
+	</description>
+  
+	<context-param>
+		<param-name>logConfiguration</param-name>
+		<param-value>classpath*:logback.xml</param-value>
+	</context-param>
+  
+	<listener>
+		<listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<servlet>
+		<servlet-name>springMvc</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+    
+	<servlet-mapping>
+		<servlet-name>springMvc</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+    
+	<filter>
+		<filter-name>mdc</filter-name>
+		<filter-class>ml.iamwhatiam.ag.web.MDCFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>mdc</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+    
+</web-app>
