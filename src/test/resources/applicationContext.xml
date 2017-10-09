@@ -40,7 +40,7 @@
 	</bean>
 	<bean id="hsf" class="ml.iamwhatiam.ag.service.impl.HsfDispatcherServiceImpl" />
 	<bean id="hsfHttp" class="ml.iamwhatiam.ag.service.impl.HsfHttpDispatcherServiceImpl" />
-	<bean id="subscriber" class="ml.iamwhatiam.ag.hsf.MockSubscriber" />
+	<bean id="subscriber" class="ml.iamwhatiam.ag.support.MockSubscriber" />
 	<!-- 结束 -->
        
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">

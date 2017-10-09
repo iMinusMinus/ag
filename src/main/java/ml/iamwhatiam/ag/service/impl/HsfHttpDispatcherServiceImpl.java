@@ -68,9 +68,9 @@ public class HsfHttpDispatcherServiceImpl extends HttpDispatcherService {
     }
 
     protected final String getRequestUrl(String serviceName, String interfaceName, String methodName, String version) {
-        String target = subscriber.getNews(interfaceName + "/" + version);
+        String target = subscriber.getNews(interfaceName + ":" + version);
         if (target == null) {//请求地址和端口：ip:port
-            log.error("找不到服务[{}]发布者，主题为[{}]", serviceName, interfaceName + "/" + version);
+            log.error("找不到服务[{}]发布者，主题为[{}]", serviceName, interfaceName + ":" + version);
             throw new NoSuchPublisherException("publisher cannot find");
         }
         return String.format(URL_FORMAT, target, interfaceName, version, methodName);
