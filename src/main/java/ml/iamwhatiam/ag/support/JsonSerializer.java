@@ -23,6 +23,8 @@
  */
 package ml.iamwhatiam.ag.support;
 
+import com.alibaba.fastjson.JSONObject;
+
 /**
  * 使用JSON进行序列化
  * 
@@ -41,7 +43,7 @@ public class JsonSerializer implements Serializer {
      */
     public String serialize(Object obj) {
         // FIXME
-        return null;
+        return JSONObject.toJSONString(obj);
     }
 
 }

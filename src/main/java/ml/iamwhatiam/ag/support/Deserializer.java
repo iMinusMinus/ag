@@ -41,7 +41,7 @@ public interface Deserializer {
      * @param type
      * @return
      */
-    public <T> T deserializeObject(String data, Class<T> type);
+    public <T> T deserializeObject(String data, Type type);
 
     /**
      * 将字符串以类型{@value classes}进行反序列化

@@ -27,6 +27,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
 /**
  * 使用JSON进行反序列化
  * 
@@ -44,14 +47,16 @@ public class JsonDeserializer implements Deserializer {
      * @see ml.iamwhatiam.ag.support.Deserializer#deserialize(java.lang.String,
      * java.lang.Class)
      */
-    public <T> T deserializeObject(String data, Class<T> type) {
-        return null;//FIXME
+    public <T> T deserializeObject(String data, Type type) {
+        return JSONObject.parseObject(data, type);//FIXME
     }
 
     public List<Object> deserializeArray(String data, Type[] types) {
         List<Object> objects = new ArrayList<Object>();
+        JSONArray array = JSONObject.parseArray(data);
         for (int i = 0; i < types.length; i++) {
-        	//TODO
+            //TODO
+            objects.add(deserializeObject(array.getString(i), types[i]));
         }
         return objects;
     }
