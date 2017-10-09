@@ -1,5 +1,6 @@
 # ag
-Application Gateway
+Application Gateway is a lightweight, extendsible, spring based web application.
+
 按如下步骤使用：
 1. 创建数据库，修改applicationContext.xml的数据库配置
 2. 增加表hsf_spring_consumer_bean，service和parameter_type，其建表语句如下：
