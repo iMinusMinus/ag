@@ -45,6 +45,7 @@ import ml.iamwhatiam.ag.service.DispatcherService;
 import ml.iamwhatiam.ag.service.impl.HttpDispatcherService;
 import ml.iamwhatiam.ag.service.impl.RpcDispatcherService;
 import ml.iamwhatiam.ag.support.OrderedComparator;
+import ml.iamwhatiam.ag.util.ReflectionUtils;
 import ml.iamwhatiam.ag.vo.FacadeVO;
 
 /**
@@ -100,7 +101,7 @@ public class DispatcherAdapter implements ApplicationContextAware {
             throw new InsufficientConfigurationException("No suitable RPC configuration for " + request.getService());
         }
         DispatcherService dispatcher = null;
-        if (preferRpc) {
+        if (ReflectionUtils.findClass(domain.getInterfaceName()) != null && preferRpc) {
             dispatcher = getBeanOfType(RpcDispatcherService.class, domain);
         }
         if (dispatcher == null) {
