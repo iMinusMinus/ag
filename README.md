@@ -1,10 +1,9 @@
 # ag
 Application Gateway
 按如下步骤使用：
-1.创建数据库，修改applicationContext.xml的数据库配置
-2.增加表hsf_spring_consumer_bean，service和parameter_type，其建表语句如下：
-  a.
-  CREATE TABLE `hsf_spring_consumer_bean` (
+1. 创建数据库，修改applicationContext.xml的数据库配置
+2. 增加表hsf_spring_consumer_bean，service和parameter_type，其建表语句如下：
+  * CREATE TABLE `hsf_spring_consumer_bean` (
 	`id` BIGINT(20) NOT NULL,
 	`interface_name` VARCHAR(128) NOT NULL COMMENT '接口类名',
 	`version` VARCHAR(32) NOT NULL COMMENT '服务版本',
@@ -18,8 +17,7 @@ Application Gateway
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 ;
-  b.
-  CREATE TABLE `service` (
+   * CREATE TABLE `service` (
 	`id` BIGINT(20) NOT NULL,
 	`service_name` VARCHAR(64) NOT NULL,
 	`interface_name` VARCHAR(128) NOT NULL,
@@ -34,8 +32,7 @@ ENGINE=InnoDB
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 ;
-  c.
-  CREATE TABLE `parameter_type` (
+  * CREATE TABLE `parameter_type` (
 	`id` BIGINT(20) NOT NULL,
 	`mid` BIGINT(20) NOT NULL,
 	`position` TINYINT(4) NOT NULL,
@@ -48,5 +45,12 @@ ENGINE=InnoDB
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 ;
+3. HSF依赖插件，请获取。不能获取的请去除HSF相关配置，并添加自定义的RPC框架。
 
-如果您想增加支持的RPC框架，需要自行建表，编写RPC DAO扩展，对应的SQL语句，以及如何订阅服务。
+如果您想增加支持的RPC框架：
+1. 修改pom.xml，增加删除依赖
+2. 扩展HttpDispatcherService和/或RpcDispatcherService
+3. 扩展RpcConfigDao，编写sql
+4. 创建对应的表
+5. 实现Subscriber
+6. 更新applicationContext.xml中的spring配置
