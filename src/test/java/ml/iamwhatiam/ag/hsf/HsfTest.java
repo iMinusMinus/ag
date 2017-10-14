@@ -46,7 +46,7 @@ import ml.iamwhatiam.ag.vo.FacadeVO;
  * @author liangming
  * @since 2017-09-08
  */
-/*@ITestSpringContext({ "/applicationContext.xml" })*/
+/*@ITestSpringContext({ "file:src/main/webapp/WEB-INF/applicationContext.xml", "file:src/main/webapp/WEB-INF/springMvc-servlet.xml" })*/
 public class HsfTest /*extends ITestSpringContextBaseCase*/ {
 
     private Logger log = LoggerFactory.getLogger(HsfTest.class);
