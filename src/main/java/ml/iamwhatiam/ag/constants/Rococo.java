@@ -32,15 +32,17 @@ package ml.iamwhatiam.ag.constants;
 public enum Rococo {
 
     NONE(0),
-    AUTHENTICATION(1), //登入验证
+    AUTHENTICATION(1), //登入验证(将参数的Token换取为OpenId)
     AUTHORIZATION(2), //权限验证
     RESTRICTION(4), //接口限制：时间、次数
     SIGNATURE_VERIFICATION(8), //验签
     DECIPHERMENT(16), //解密
     PARAMETER_KEY_MAPPING(32), //参数key转换，例如：oldKey to outer.newKey --> {"oldKey":""} to {"outer":{"newKey":""}}
-    RESULT_KEY_MAPPING(64), //结果key转换
-    ENCRYPTION(128), //加密
-    SIGNATURE(256),//签名
+    PARAMETER_VALUE_MAPPING(64), //参数值转换
+    RESULT_KEY_MAPPING(128), //结果key转换
+    RESULT_VALUE_MAPPING(256), //结果值转换
+    ENCRYPTION(512), //加密
+    SIGNATURE(1024),//签名
     ;
 
     /**
