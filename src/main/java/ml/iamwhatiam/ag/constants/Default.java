@@ -34,8 +34,9 @@ import ml.iamwhatiam.ag.support.Accessible;
 public enum Default implements Accessible {
 
     CHARSET("UTF-8"),
-    OAUTH_TOKEN("token"),
-    OPEN_ID("OpenId"),//对java不友好，但是必须！
+    OAUTH_TOKEN("Token"),
+    OPEN_ID("OpenId"), //对java不友好，但是必须！
+    PRIVILEGE_KEY("%s$%s"),//权限缓存key
     ;
 
     private Default() {
