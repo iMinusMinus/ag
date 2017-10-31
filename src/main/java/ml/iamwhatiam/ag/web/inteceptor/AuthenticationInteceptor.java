@@ -27,12 +27,14 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Component;
+
 import ml.iamwhatiam.ag.constants.Default;
 import ml.iamwhatiam.ag.constants.Rococo;
-import ml.iamwhatiam.ag.constants.SerializeFormat;
 import ml.iamwhatiam.ag.dao.ServiceConfigDao;
 import ml.iamwhatiam.ag.domain.MethodDomain;
 import ml.iamwhatiam.ag.exceptions.InteceptException;
+import ml.iamwhatiam.ag.service.CacheService;
 import ml.iamwhatiam.ag.support.Deserializer;
 import ml.iamwhatiam.ag.support.DeserializerFactory;
 import ml.iamwhatiam.ag.support.Serializer;
@@ -45,63 +47,75 @@ import ml.iamwhatiam.ag.web.ParameterInteceptor;
  * 登入验证及参数处理
  *
  * @author iMinusMinus
- * @since 2017年10月4日
+ * @since 2017-10-04
  */
+@Component
+public class AuthenticationInteceptor implements DispatcherInterceptor, ParameterInteceptor {
 
-public class AuthenticationInteceptor implements DispatcherInterceptor,
-		ParameterInteceptor {
-	
-	@Resource
-	private ServiceConfigDao serviceConfig;
+    @Resource
+    private ServiceConfigDao serviceConfig;
 
-	/* (non-Javadoc)
-	 * @see org.springframework.core.Ordered#getOrder()
-	 */
-	@Override
-	public int getOrder() {
-		return Integer.MIN_VALUE;
-	}
+    @Resource
+    private CacheService     cache;
 
-	/**
-	 * 是否需要触发
-	 */
-	@Override
-	public boolean canIntecept(FacadeVO param) {
-		MethodDomain service = serviceConfig.findByServiceName(param.getService());
-		int rococo = service.getRococo();
-		return Rococo.AUTHENTICATION.shouldDecorate(rococo);
-	}
+    public int getOrder() {
+        return 0;
+    }
 
-	/**
-	 * 替换凭证为用户标识
-	 */
-	@Override
-	public void intecept(FacadeVO param) {
-		//使用token换取OpenId
+    /**
+     * 是否需要触发
+     */
+    public boolean canIntecept(FacadeVO param) {
+        MethodDomain service = serviceConfig.findByServiceName(param.getService());
+        int rococo = service.getRococo();
+        return Rococo.AUTHENTICATION.shouldDecorate(rococo);
+    }
 
-	}
+    /**
+     * 替换凭证为用户标识
+     */
+    public void intecept(FacadeVO param) {
+        //使用token换取OpenId
+        Deserializer deserializer = DeserializerFactory.getDeserializer(param.getFormat());
+        Map<Object, Object> map = deserializer.deserializeObject(param.getParameters(), Map.class);
+        String accessToken = (String) map.get(Default.OAUTH_TOKEN.get());
+        map.put(Default.OPEN_ID.get(), cache.get(accessToken));
+        Serializer serializer = SerializerFactory.getSerializer(param.getFormat());
+        param.setParameters(serializer.serialize(map));
+    }
 
-	/**
-	 * 判断是否登入
-	 */
-	@Override
-	public boolean preDispatch(FacadeVO param, Object dispatcher)
-			throws InteceptException {
-		Deserializer deserializer = DeserializerFactory.getDeserializer(param.getFormat());
-		Map<Object, Object> map = deserializer.deserializeObject(param.getParameters(), Map.class);
-		String accessToken = (String) map.get(Default.OAUTH_TOKEN.get());
-		//if(cache.get(accessToken) == null) {throws new InteceptException("Not Login");}
-		return false;
-	}
+    /**
+     * 判断是否登入
+     */
+    public boolean preDispatch(FacadeVO param, Object dispatcher) throws InteceptException {
+        Deserializer deserializer = DeserializerFactory.getDeserializer(param.getFormat());
+        Map<Object, Object> map = deserializer.deserializeObject(param.getParameters(), Map.class);
+        String accessToken = (String) map.get(Default.OAUTH_TOKEN.get());
+        if (cache.get(accessToken) == null) {
+            throw new InteceptException("Not Login");
+        }
+        return false;
+    }
 
-	/* (non-Javadoc)
-	 * @see ml.iamwhatiam.ag.web.DispatcherInterceptor#postDispatch(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public Object postDispatch(Object result, Object handler)
-			throws InteceptException {
-		// DO NOTHING
-		return result;
-	}
+    public Object postDispatch(Object result, Object handler) throws InteceptException {
+        // DO NOTHING
+        return result;
+    }
+
+    public ServiceConfigDao getServiceConfig() {
+        return serviceConfig;
+    }
+
+    public void setServiceConfig(ServiceConfigDao serviceConfig) {
+        this.serviceConfig = serviceConfig;
+    }
+
+    public CacheService getCache() {
+        return cache;
+    }
+
+    public void setCache(CacheService cache) {
+        this.cache = cache;
+    }
 
 }
