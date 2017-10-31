@@ -42,6 +42,10 @@ public class ReflectionUtils {
 
     private static Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
 
+    private ReflectionUtils() {
+
+    }
+
     /**
      * @see #invoke(Method, Object, Object...)
      * @param methodName 方法名
@@ -68,8 +72,8 @@ public class ReflectionUtils {
     /**
      * 使用指定参数调用指定对象的指定方法
      * 
-     * @param method 方法
-     * @param target 对象
+     * @param method 方法, NotNull
+     * @param target 对象, NotNull. 静态方法传入类，否则传入实例
      * @param args 参数
      * @return 方法调用结果
      */
@@ -84,8 +88,7 @@ public class ReflectionUtils {
             if ((method.getModifiers() & Modifier.STATIC) != 0) {
                 obj = method.getDeclaringClass();
             }
-            Object result = method.invoke(obj, args);
-            return result;
+            return method.invoke(obj, args);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -139,7 +142,7 @@ public class ReflectionUtils {
             Method[] methods = self.getDeclaredMethods();
             for (Method method : methods) {
                 if (method.getName().equals(methodName) && Arrays.equals(method.getParameterTypes(), parameterTypes)
-                        && (method.getModifiers() & acceptModifiers) != 0) {
+                        && isAccessibleModifier(method, acceptModifiers, klazz)) {
                     return method;
                 }
             }
@@ -188,6 +191,11 @@ public class ReflectionUtils {
             }
         }
         return true;
+    }
+
+    private static boolean isAccessibleModifier(Method method, int acceptModifiers, Class<?> klazz) {
+        return ((method.getModifiers() & acceptModifiers) != 0)
+                || (method.getDeclaringClass() == klazz && method.getModifiers() == Modifier.STATIC);
     }
 
 }
