@@ -52,7 +52,8 @@ public class FacadeVO implements Serializable {
     /**
      * 参数格式：JSON、XML
      */
-    private SerializeFormat   format           = SerializeFormat.JSON;
+    @NotNull
+    private SerializeFormat   format;
 
     /**
      * 签名
@@ -60,9 +61,9 @@ public class FacadeVO implements Serializable {
     private String            sign;
 
     /**
-     * 签名算法
+     * 签名算法: sha1WithRSA, sha1WithDSA
      */
-    private String            signType         = "RSA";
+    private String            signType;
 
     /**
      * API标识
@@ -79,12 +80,12 @@ public class FacadeVO implements Serializable {
      * 调用版本
      */
     @NotNull
-    private String            version          = "1.0.0";
+    private String            version;
 
     /**
-     * 字符编码（仅针对参数部分）
+     * 字符编码（仅针对参数部分）:UTF-8
      */
-    private String            charset          = "UTF-8";
+    private String            charset;
 
     public String getClient() {
         return client;
