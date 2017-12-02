@@ -49,6 +49,14 @@ public class HsfDispatcherServiceImpl extends RpcDispatcherService {
     public boolean support(String type) {
         return "HSF".equalsIgnoreCase(type);
     }
+    
+    /**
+     * @see HsfConsumerBeanBuilder#getBeanName
+     */
+    @Override
+    protected String getBeanName(String interfaceName, String version) {
+    	return interfaceName + ":" + version;
+    }
 
     /**
      * 设置线程上下文

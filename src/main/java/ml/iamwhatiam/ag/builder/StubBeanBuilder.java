@@ -56,6 +56,16 @@ public abstract class StubBeanBuilder implements ApplicationContextAware, Initia
      * @return
      */
     protected abstract List<? extends RpcBeanDomain> loadDefinition();
+    
+    /**
+     * 定义注册的bean名字
+     * 
+     * @param domain
+     * @return
+     */
+    protected String getBeanName(RpcBeanDomain domain) {
+    	return domain.getInterfaceName();
+    }
 
     /**
      * 构建bean定义
@@ -98,7 +108,7 @@ public abstract class StubBeanBuilder implements ApplicationContextAware, Initia
                 log.error("配置的RPC stub bean错误：{}", beanDefintion);
                 continue;
             }
-            String beanName = beanDefintion.getInterfaceName() + ":" + beanDefintion.getVersion();
+            String beanName = getBeanName(beanDefintion);
             if (applicationContext.containsBean(beanName)) {
                 log.warn("bean [{}]已存在", beanName);
                 continue;

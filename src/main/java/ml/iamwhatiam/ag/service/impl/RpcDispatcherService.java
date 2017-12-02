@@ -57,6 +57,17 @@ public abstract class RpcDispatcherService implements DispatcherService, Applica
 
     @Resource
     protected ServiceConfigDao   serviceConfig;
+    
+    /**
+     * 默认注册的bean id为接口类全名，如果不是，子类需要重写此方法
+     * 
+     * @param interfaceName 接口类全名
+     * @param version 服务提供方版本
+     * @return
+     */
+    protected String getBeanName(String interfaceName, String version) {
+    	return interfaceName;
+    }
 
     /**
      * 获取配置-->寻找bean-->组装参数-->调用
@@ -74,7 +85,7 @@ public abstract class RpcDispatcherService implements DispatcherService, Applica
             throw new InsufficientConfigurationException();
         }
 
-        String beanName = method.getInterfaceName() + ":" + request.getVersion();//@see HsfConsumerBeanBuilder#afterPropertiesSet
+        String beanName = getBeanName(method.getInterfaceName(), request.getVersion());
         Object bean = applicationContext.getBean(beanName);
 
         String[] parameterTypes = new String[0];

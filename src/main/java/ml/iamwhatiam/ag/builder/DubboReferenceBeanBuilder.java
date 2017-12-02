@@ -63,7 +63,23 @@ public class DubboReferenceBeanBuilder extends StubBeanBuilder {
 		log.debug("load Dubbo ReferenceBean definitions: {}", list.size());
 		return list;
 	}
+	
+	/**
+	 * @see com.alibaba.dubbo.config.spring.schema.DubboBeanDefinitionParser#parse(Element, ParserContext, Class, boolean)
+	 */
+	@Override
+	protected String getBeanName(RpcBeanDomain beanDefintion) {
+		DubboReferenceBeanDomain dubboBean = (DubboReferenceBeanDomain) beanDefintion;
+		if(dubboBean.getBeanId() != null && dubboBean.getBeanId().length() > 0) {
+			return dubboBean.getBeanId();
+		}
+    	return beanDefintion.getInterfaceName();
+    }
 
+	/**
+	 * 构建Dubbo ReferenceBean
+	 * @param beanDefintion
+	 */
 	protected BeanDefinitionBuilder buildBeanDefintion(RpcBeanDomain beanDefintion) {
 		DubboReferenceBeanDomain dubboBean = (DubboReferenceBeanDomain) beanDefintion;
 		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(CLASS);

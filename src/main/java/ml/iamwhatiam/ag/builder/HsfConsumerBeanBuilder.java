@@ -66,6 +66,11 @@ public class HsfConsumerBeanBuilder extends StubBeanBuilder {
         log.debug("load HSF consumer bean definitions: {}", list.size());
         return list;
     }
+    
+    @Override
+    protected String getBeanName(RpcBeanDomain beanDefintion) {
+    	return beanDefintion.getInterfaceName() + ":" + beanDefintion.getVersion();//@see HsfConsumerBeanBuilder#afterPropertiesSet
+    }
 
     /**
      * 构建HSFSpringConsumerBean
