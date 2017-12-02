@@ -158,7 +158,7 @@ public class DubboReferenceBeanDomain extends RpcBeanDomain {
 	/**
 	 * 服务版本号
 	 */
-	private String version = "0.0.0";
+	private String version;
 	
 	/**
 	 * 服务群组
@@ -238,7 +238,7 @@ public class DubboReferenceBeanDomain extends RpcBeanDomain {
 		/**
 		 * 统计参数
 		 */
-		private Integer stat;
+		private int stat = -1;
 		
 		/**
 		 * 异步调用回调实例

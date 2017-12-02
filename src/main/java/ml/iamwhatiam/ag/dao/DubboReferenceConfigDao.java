@@ -45,8 +45,19 @@ public interface DubboReferenceConfigDao extends RpcConfigDao {
 		@Result(column = "id", property = "id"),
 		@Result(column = "bean_id", property = "beanId"),
 		@Result(column = "interface_name", property = "interfaceName"),
+		@Result(column = "provider_version", property = "version"),
 		@Result(column = "check_provider_avaliable", property = "check"),
 	})
 	List<DubboReferenceBeanDomain> load();
+	
+	@Select("SELECT * FROM dubbo_reference_bean WHERE interface_name = #{0} AND provider_version = #{1}")
+	@Results({
+		@Result(column = "id", property = "id"),
+		@Result(column = "bean_id", property = "beanId"),
+		@Result(column = "interface_name", property = "interfaceName"),
+		@Result(column = "provider_version", property = "version"),
+		@Result(column = "check_provider_avaliable", property = "check"),
+	})
+	DubboReferenceBeanDomain findByInterfaceNameAndVersion(String interfaceName, String version);
 
 }

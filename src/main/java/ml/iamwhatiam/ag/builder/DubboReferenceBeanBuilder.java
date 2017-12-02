@@ -55,6 +55,7 @@ public class DubboReferenceBeanBuilder extends StubBeanBuilder {
 	private final String CLASS = "com.alibaba.dubbo.config.spring.ReferenceBean";
 	private final String INTERFACE_ATTR = "interface";
 	private final String CHECK_ATTR = "check";
+	private final String ID = "id";
 
 	
 	protected List<? extends RpcBeanDomain> loadDefinition() {
@@ -69,6 +70,10 @@ public class DubboReferenceBeanBuilder extends StubBeanBuilder {
 		builder.setLazyInit(false);
 		builder.addPropertyValue(INTERFACE_ATTR, dubboBean.getInterfaceName());
 		builder.addPropertyValue(CHECK_ATTR, dubboBean.isCheck());
+		builder.addPropertyValue(ID, dubboBean.getInterfaceName());
+		if(dubboBean.getBeanId() != null && dubboBean.getBeanId().length() > 0) {
+			builder.addPropertyValue(ID, dubboBean.getBeanId());
+		}
 		//add other property here
 		return builder;
 	}
