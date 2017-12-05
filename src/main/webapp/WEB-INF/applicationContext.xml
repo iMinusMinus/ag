@@ -26,7 +26,7 @@
        </bean>
        
        <!-- 单独拎出HSF部分，以备去除依赖 -->
-       <!-- 开始 -->
+       <!-- 开始 
        <bean class="ml.iamwhatiam.ag.builder.HsfConsumerBeanBuilder" />
        <bean id="hsfConfig" class="org.mybatis.spring.mapper.MapperFactoryBean">
        		<property name="mapperInterface" value="ml.iamwhatiam.ag.dao.HsfConsumerConfigDao" />
@@ -34,10 +34,10 @@
        </bean>
        <bean id="hsf" class="ml.iamwhatiam.ag.service.impl.HsfDispatcherServiceImpl" />
        <bean id="hsfHttp" class="ml.iamwhatiam.ag.service.impl.HsfHttpDispatcherServiceImpl" />
-       <bean id="subscriber" class="ml.iamwhatiam.ag.support.MockSubscriber" />
+       <bean id="subscriber" class="ml.iamwhatiam.ag.support.MockSubscriber" />-->
        <!-- 结束 -->
        
-        <!-- 单独拎出HSF部分，以备去除依赖 -->
+        <!-- 单独拎出Dubbo部分，以备去除依赖 -->
        <!-- 开始 -->
        <bean class="ml.iamwhatiam.ag.builder.DubboReferenceBeanBuilder" />
        <bean id="dubboConfig" class="org.mybatis.spring.mapper.MapperFactoryBean">
