@@ -23,8 +23,12 @@
  */
 package ml.iamwhatiam.ag.util;
 
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +48,24 @@ public class ReflectionUtils {
 
     private ReflectionUtils() {
 
+    }
+
+    /**
+     * 获取泛型实际类信息
+     * 
+     * @param javaType
+     * @return
+     */
+    public static Class<?> type2class(Type javaType) {
+        if (javaType instanceof ParameterizedType) {
+            Type[] types = ((ParameterizedType) javaType).getActualTypeArguments();
+            return type2class(types[types.length - 1]);
+        } else if (javaType instanceof TypeVariable) {
+            return Object.class;
+        } else if (javaType instanceof GenericArrayType) {
+            return type2class(((GenericArrayType) javaType).getGenericComponentType());
+        }
+        return (Class<?>) javaType;
     }
 
     /**

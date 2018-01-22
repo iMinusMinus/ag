@@ -23,6 +23,8 @@
  */
 package ml.iamwhatiam.ag.service.impl;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -44,6 +46,7 @@ import ml.iamwhatiam.ag.exceptions.NoSuchPublisherException;
 import ml.iamwhatiam.ag.service.DispatcherService;
 import ml.iamwhatiam.ag.support.Deserializer;
 import ml.iamwhatiam.ag.support.DeserializerFactory;
+import ml.iamwhatiam.ag.util.ReflectionUtils;
 import ml.iamwhatiam.ag.vo.FacadeVO;
 import ml.iamwhatiam.ag.vo.HttpRequestVO;
 
@@ -71,12 +74,11 @@ public abstract class HttpDispatcherService implements DispatcherService {
      * 组装HTTP请求URL
      * 
      * @param service 服务名称
-     * @param interfaceName 接口全限定名
+     * @param method 方法配置信息
      * @param version 服务版本
-     * @param methodName 方法名
      * @return 受理URL
      */
-    protected abstract String getRequestUrl(String service, String interfaceName, String methodName, String version);
+    protected abstract String getRequestUrl(String service, MethodDomain method, String version);
 
     /**
      * 组装HTTP请求头
@@ -89,20 +91,21 @@ public abstract class HttpDispatcherService implements DispatcherService {
      * 将原始请求重新组装成新的请求
      * 
      * @param req 请求参数类型和请求数据
+     * @param md 方法配置信息
      * @return
      */
-    protected abstract Object recombineBody(HttpRequestVO req);
+    protected abstract Object recombineBody(HttpRequestVO req, MethodDomain md);
 
     /**
      * 组装HTTP请求参数
      * 
-     * @param parameterTypes 参数类型信息
+     * @param md 方法配置信息
      * @param parameters 参数信息
      * @param format 参数格式：json、xml、protobuffer
      * @return 组装结果
      */
-    protected Object getRequestBody(List<ParameterTypeDomain> parameterTypes, String parameters,
-                                    SerializeFormat format) {
+    protected Object getRequestBody(MethodDomain md, String parameters, SerializeFormat format) {
+        List<ParameterTypeDomain> parameterTypes = md.getParameters();
         HttpRequestVO req = new HttpRequestVO();
         String[] argsTypes = new String[0];
         Object[] argsObjects = new Object[0];
@@ -113,6 +116,7 @@ public abstract class HttpDispatcherService implements DispatcherService {
             Deserializer deserializer = DeserializerFactory.getDeserializer(format);
             for (int i = 0; i < parameterTypes.size(); i++) {
                 argsTypes[i] = parameterTypes.get(i).getType();
+                classes[i] = ReflectionUtils.findClass(argsTypes[i]);
             }
             if (parameterTypes.size() == 1) {
                 argsObjects[0] = deserializer.deserializeObject(parameters, classes[0]);
@@ -125,10 +129,35 @@ public abstract class HttpDispatcherService implements DispatcherService {
         }
         req.setParameterTypes(argsTypes);
         req.setArgs(argsObjects);
-        return recombineBody(req);
+        return recombineBody(req, md);
     }
 
-    protected abstract Object handleResponseBody(HttpEntity<String> response);
+    /**
+     * 处理返回结果
+     * 
+     * @param response
+     * @param returnType 方法返回类型，可能是泛型！
+     * @return
+     */
+    protected abstract Object handleResponseBody(HttpEntity<String> response, Type returnType);
+
+    protected Type extractReturnType(MethodDomain md) {
+        if (!md.hasGenericReturn()) {
+            return ReflectionUtils.findClass(md.getReturnType());
+        }
+        try {
+            Class<?> clazz = ReflectionUtils.findClass(md.getInterfaceName());
+            Class<?>[] parameterTypes = new Class<?>[md.getParameters().size()];
+            for (int index = 0; index < md.getParameters().size(); index++) {
+                parameterTypes[index] = ReflectionUtils.findClass(md.getParameters().get(index).getType());
+            }
+            Method method = ReflectionUtils.findAccessibleMethod(md.getMethodName(), clazz, parameterTypes);
+            return method.getGenericReturnType();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ReflectionUtils.findClass(md.getReturnType());
+        }
+    }
 
     /**
      * 使用HTTP(s)转发处理请求
@@ -145,16 +174,15 @@ public abstract class HttpDispatcherService implements DispatcherService {
             log.error("服务[{}]未配置", request.getService());
             throw new InsufficientConfigurationException();
         }
-        String url = getRequestUrl(request.getService(), method.getInterfaceName(), method.getMethodName(),
-                request.getVersion());
+        String url = getRequestUrl(request.getService(), method, request.getVersion());
         log.info("服务[{}]调用地址[{}]", request.getService(), url);
         HttpHeaders header = getRequestHeader();
-        Object body = getRequestBody(method.getParameters(), request.getParameters(), request.getFormat());
+        Object body = getRequestBody(method, request.getParameters(), request.getFormat());
         HttpEntity<Object> req = new HttpEntity<Object>(body, header);
         log.debug("服务[{}]HTTP请求参数：{}", request.getService(), req);
         ResponseEntity<String> response = rest.postForEntity(url, req, String.class);
         log.debug("服务[{}]HTTP返回结果：{}", request.getService(), response);
-        Object result = handleResponseBody(response);
+        Object result = handleResponseBody(response, extractReturnType(method));
         log.info("服务[{}]调用返回结果：{}", request.getService(), result);
         return result;
     }

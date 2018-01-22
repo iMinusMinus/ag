@@ -27,6 +27,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import ml.iamwhatiam.ag.constants.Generic;
+
 /**
  * 方法实体
  * 
@@ -70,6 +72,19 @@ public class MethodDomain extends BaseDomain {
      */
     @NotNull
     private String                    returnType;
+
+    /**
+     * 泛型标识
+     */
+    private Generic                   generic;
+
+    public boolean hasGenericParameters() {
+        return generic != null && (generic == Generic.IN || generic == Generic.BOTH);
+    }
+
+    public boolean hasGenericReturn() {
+        return generic != null && (generic == Generic.OUT || generic == Generic.BOTH);
+    }
 
     public String getServiceName() {
         return serviceName;
@@ -119,10 +134,19 @@ public class MethodDomain extends BaseDomain {
         this.returnType = returnType;
     }
 
+    public Generic getGeneric() {
+        return generic;
+    }
+
+    public void setGeneric(Generic generic) {
+        this.generic = generic;
+    }
+
     @Override
     public String toString() {
-        return "{\"serviceName\":\"" + serviceName + "\", \"interfaceName\":\"" + interfaceName + "\", \"methodName\":\""
-                + methodName + "\", \"rococo\":\"" + rococo + "\", \"parameters\":" + parameters + ", \"returnType\":\"" + returnType + "\"}";
+        return "{\"serviceName\":\"" + serviceName + "\", \"interfaceName\":\"" + interfaceName
+                + "\", \"methodName\":\"" + methodName + "\", \"rococo\":\"" + rococo + "\", \"parameters\":"
+                + parameters + ", \"returnType\":\"" + returnType + "\", \"generic\":\"" + generic + "\"}";
     }
 
 }
