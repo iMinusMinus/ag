@@ -59,9 +59,6 @@ public class HsfHttpDispatcherServiceImpl extends HttpDispatcherService {
 
     private final String    QUERY_STRING   = "$1=%s&$2=%s";
 
-    /**
-     * @see com.taobao.hsf.remoting.provider.ProviderProcessor#handleRequest0
-     */
     private final String    GENERIC_METHOD = "$invoke";
 
     private final String[]  ARG_TYPES      = { String.class.getName(), String[].class.getName(),
@@ -132,6 +129,7 @@ public class HsfHttpDispatcherServiceImpl extends HttpDispatcherService {
      *      RestfulHttpRequestProcessor#parseUrlEncodedContent
      * @see com.taobao.hsf.remoting.netty.server.http.processor.RestfulHttpRequestProcessor#parseJsonContent
      * @see com.taobao.hsf.remoting.netty.server.http.processor.UglyTypeHttpRequestProcessor#process
+     * @see com.taobao.hsf.remoting.provider.ProviderProcessor#handleRequest0
      */
     protected final Object recombineBody(HttpRequestVO req, MethodDomain md) {
         Serializer serializer = SerializerFactory.getSerializer(SerializeFormat.JSON);
@@ -195,7 +193,8 @@ public class HsfHttpDispatcherServiceImpl extends HttpDispatcherService {
             Deserializer deserializer = DeserializerFactory.getDeserializer(SerializeFormat.JSON);
             return deserializer.deserializeObject(response.getBody(), returnType);
         } catch (Exception e) {//如果JSON反序列化异常，则服务端返回的就是异常信息
-            throw new RpcInvokingException(response.getBody(), e);
+            log.error(e.getMessage(), e);
+            throw new RpcInvokingException(response.getBody());
         }
     }
 
