@@ -140,6 +140,7 @@ public class HsfHttpDispatcherServiceImpl extends HttpDispatcherService {
             Object[][] from = { req.getParameterTypes(), req.getArgs() };
             data = from;
         } else {
+            //如果请求参数（参数对象包含&或=，服务端处理时会失败）
             data = String.format(QUERY_STRING, serializer.serialize(req.getParameterTypes()),
                     serializer.serialize(req.getArgs()));
         }
