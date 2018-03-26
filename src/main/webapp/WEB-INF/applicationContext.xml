@@ -4,10 +4,8 @@
        xsi:schemaLocation="
            http://www.springframework.org/schema/aop     http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
            http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd           
-       " default-autowire="byName">
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd" >
 
-       <context:property-placeholder ignore-resource-not-found="true" ignore-unresolvable="true" file-encoding="UTF-8"/>
        <aop:aspectj-autoproxy/>
        
        <bean id="rest" class="org.springframework.web.client.RestTemplate">
@@ -33,7 +31,9 @@
   			<property name="sqlSessionFactory" ref="sqlSessionFactory" />
        </bean>
        <bean id="hsf" class="ml.iamwhatiam.ag.service.impl.HsfDispatcherServiceImpl" />
-       <bean id="hsfHttp" class="ml.iamwhatiam.ag.service.impl.HsfHttpDispatcherServiceImpl" />
+       <bean id="hsfHttp" class="ml.iamwhatiam.ag.service.impl.HsfHttpDispatcherServiceImpl">
+  			<property name="format" value="JSON" />
+       </bean>
        <bean id="subscriber" class="ml.iamwhatiam.ag.support.MockSubscriber" />-->
        <!-- 结束 -->
        
@@ -48,10 +48,10 @@
        <!-- 结束 -->
        
        <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-       		<property name="driverClassName" value="org.gjt.mm.mysql.Driver" />
-       		<property name="url" value="jdbc:mysql://127.0.0.1:3306/test" />
-       		<property name="username" value="root" />
-       		<property name="password" value="hello world" />
+       		<property name="driverClassName" value="${spring.datasource.driverClassName}" />
+       		<property name="url" value="${spring.datasource.url}" />
+       		<property name="username" value="${spring.datasource.username}" />
+       		<property name="password" value="${spring.datasource.password}" />
        </bean>
        
        <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
