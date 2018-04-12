@@ -23,6 +23,9 @@
  */
 package ml.iamwhatiam.ag.dao;
 
+import org.apache.ibatis.annotations.Many;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
@@ -34,10 +37,18 @@ import ml.iamwhatiam.ag.domain.PartnerConfigurationDomain;
  * @author iMinusMinus
  * @since 2017-11-06
  */
-@Repository("partnerConfig")
-public interface PartnerConfigDao {
+@Repository("partnerGatewayConfig")
+public interface PartnerConfigurationDao {
 
-    @Select("SELECT * FROM partner_config WHER client_id = {client}")
-    PartnerConfigurationDomain findByClient(String client);
+    @Select("SELECT * FROM partner_config WHER app_id = #{appId}")
+    @Results({ @Result(id = true, column = "id", property = "id"), @Result(column = "app_id", property = "appId"),
+            @Result(column = "transformation", property = "transformation"),
+            @Result(column = "serialize_format", property = "format"),
+            @Result(column = "charset_name", property = "charset"),
+            @Result(column = "public_key", property = "publicKey"),
+            @Result(column = "sign_algorithm", property = "signAlgorithm"),
+            @Result(column = "joint", property = "joint"), @Result(column = "private_key", property = "privateKey"),
+            @Result(column = "app_id", property = "parameterMappings", many = @Many(select = "ml.iamwhatiam.ag.dao.GatewayParameterMappingDao.findByAppId")), })
+    PartnerConfigurationDomain findByAppid(String appid);
 
 }
