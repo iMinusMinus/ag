@@ -23,8 +23,6 @@
  */
 package ml.iamwhatiam.ag.domain;
 
-import java.util.Map;
-
 import ml.iamwhatiam.ag.constants.Joint;
 import ml.iamwhatiam.ag.constants.SerializeFormat;
 
@@ -36,37 +34,37 @@ import ml.iamwhatiam.ag.constants.SerializeFormat;
  */
 public class PartnerConfigurationDomain extends BaseDomain {
 
-    private static final long   serialVersionUID = -6422814185044069652L;
+    private static final long serialVersionUID = -6422814185044069652L;
 
     /**
      * 分配给合作方的标识
      * 
      * @see ml.iamwhatiam.ag.vo.FacadeVO#client
      */
-    private String              appid;
+    private String            appId;
 
     /**
-     * 加密算法
+     * 加密算法，默认为RSA
      */
-    private String              transformation   = "RSA";
+    private String            transformation;
 
     /**
-     * 输出格式（如果请求时格式为空，考虑使用此输入格式）
+     * 输出格式（如果请求时格式为空，考虑使用此输入格式），默认为JSON
      */
-    private SerializeFormat     format;
+    private SerializeFormat   format;
 
     /**
-     * 输出字符编码
+     * 输出字符编码，默认为UTF-8
      */
-    private String              charset          = "UTF-8";
+    private String            charset;
 
     /**
      * 合作方提供的公钥
      */
-    private String              key;
+    private String            key;
 
     /**
-     * 签名算法：
+     * 签名算法（RSA加密时，默认为SHA1withRSA）或摘要算法：
      * <ul>
      * <li>DSA
      * <ul>
@@ -85,29 +83,24 @@ public class PartnerConfigurationDomain extends BaseDomain {
      * </ul>
      * </ul>
      */
-    private String              signAlgorithm    = "SHA1withRSA";
+    private String            signAlgorithm;
 
     /**
      * 验签时原参数的拼接方式
      */
-    private Joint               joint            = Joint.NONE;
+    private Joint             joint;
 
     /**
      * 针对合作方的私钥
      */
-    private String              privateKey;
+    private String            privateKey;
 
-    /**
-     * 参数映射：空Map，无映射；key不为null，value为null，从原参数移除出该key；若key全部移除，则只计算参数值
-     */
-    private Map<String, String> mapping;
-
-    public String getAppid() {
-        return appid;
+    public String getAppId() {
+        return appId;
     }
 
-    public void setAppid(String appid) {
-        this.appid = appid;
+    public void setAppId(String appId) {
+        this.appId = appId;
     }
 
     public String getTransformation() {
@@ -166,21 +159,12 @@ public class PartnerConfigurationDomain extends BaseDomain {
         this.privateKey = privateKey;
     }
 
-    public Map<String, String> getMapping() {
-        return mapping;
-    }
-
-    public void setMapping(Map<String, String> mapping) {
-        this.mapping = mapping;
-    }
-
     @Override
     public String toString() {
-        return "PartnerConfigurationDomain [appid=" + appid + ", transformation=" + transformation + ", format="
+        return "PartnerConfigurationDomain [appId=" + appId + ", transformation=" + transformation + ", format="
                 + format + ", charset=" + charset + ", key=" + key + ", signAlgorithm=" + signAlgorithm + ", joint="
-                + joint + ", privateKey=" + privateKey + ", mapping=" + mapping + ", id=" + id + ", creator=" + creator
-                + ", gmtCreated=" + gmtCreated + ", modifier=" + modifier + ", gmtModified=" + gmtModified
-                + ", deleted=" + deleted + "]";
+                + joint + ", privateKey=" + privateKey + ", id=" + id + ", creator=" + creator + ", gmtCreated="
+                + gmtCreated + ", modifier=" + modifier + ", gmtModified=" + gmtModified + ", deleted=" + deleted + "]";
     }
 
 }
