@@ -83,7 +83,7 @@ public class SecurityUtils {
      *            <li>padding: NoPadding , PKCS5Padding, PKCS1Padding,
      *            OAEPWithSHA-1AndMGF1Padding, OAEPWithSHA-256AndMGF1Padding
      * @param plain 明文字节
-     * @param keyt 密钥
+     * @param keyt 密钥 base64编码
      * @return 密文
      */
     public static String encrypt(String transformation, byte[] plain, String keyt) {
@@ -100,7 +100,7 @@ public class SecurityUtils {
                 blockSize = getMaxBlockSize((RSAKey) key) - 11;
             }
             Cipher cipher = Cipher.getInstance(transformation);
-            cipher.init(Cipher.ENCRYPT_MODE, key);
+            cipher.init(Cipher.ENCRYPT_MODE, key);//TODO initial vector or certificate
             byte[] tmp = null;
             int offset = 0;
             while (length - offset > 0) {
@@ -214,6 +214,7 @@ public class SecurityUtils {
      *            <li>padding: NoPadding , PKCS5Padding, PKCS1Padding,
      *            OAEPWithSHA-1AndMGF1Padding, OAEPWithSHA-256AndMGF1Padding
      * @param ciphered base64格式密文
+     * @param keyt 密钥 base64编码
      * @return
      */
     public static byte[] decrypt(String transformation, String ciphertext, String keyt) {
@@ -231,7 +232,7 @@ public class SecurityUtils {
                 blockSize = getMaxBlockSize((RSAKey) key);
             }
             Cipher cipher = Cipher.getInstance(transformation);
-            cipher.init(Cipher.DECRYPT_MODE, key);
+            cipher.init(Cipher.DECRYPT_MODE, key);//TODO initial vector or certificate
             byte[] tmp = null;
             int offset = 0;
             while (length - offset > 0) {
@@ -293,7 +294,7 @@ public class SecurityUtils {
     /**
      * @param algorithm 算法：DiffieHellman、DSA、RSA
      * @param privateKey 密钥，Java和C#使用PKCS8，PHP使用pem，密钥中不要有空格！
-     * @return
+     * @return 私钥
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
@@ -306,7 +307,7 @@ public class SecurityUtils {
     /**
      * @param algorithm 算法：DiffieHellman、DSA、RSA
      * @param publicKey 公钥
-     * @return
+     * @return 公钥
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
@@ -342,7 +343,7 @@ public class SecurityUtils {
      * @param transformation 算法
      * @return 是否对称加密
      */
-    private static boolean isSymmetrical(String transformation) {
+    public static boolean isSymmetrical(String transformation) {
         String algorithm = transformation.split("/")[0];
         return !"RSA".equals(algorithm) && !"DSA".equals(algorithm);
     }
