@@ -31,10 +31,10 @@ package ml.iamwhatiam.ag.util;
  */
 public class Id {
 
-    private static IdWorker gen = new IdWorker(0, 0, null, null);
+    private final static IdWorker gen = new IdWorker(0, 0, null, null);//FIXME docker-worker-data_center
 
     public static String next() {
-        return long2str(gen.getId("abc"));
+        return long2str(gen.getId("any"));
     }
 
     public static String long2str(long number) {

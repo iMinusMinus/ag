@@ -29,7 +29,8 @@ import org.slf4j.LoggerFactory;
 /**
  * snowflake java
  * 
- * @author liangming 2017年8月29日 上午9:35:34
+ * @author iMinusMinus
+ * @since 2017-08-29
  */
 public class IdWorker {
 
@@ -39,7 +40,7 @@ public class IdWorker {
 
     private long   dataCenterId;
 
-    private Object reporter;
+    private Object reporter;                                                           //think about zookeeper
 
     private long   sequence;
 
