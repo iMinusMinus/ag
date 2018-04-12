@@ -23,6 +23,8 @@
  */
 package ml.iamwhatiam.ag.domain;
 
+import java.util.List;
+
 import ml.iamwhatiam.ag.constants.Joint;
 import ml.iamwhatiam.ag.constants.SerializeFormat;
 
@@ -34,34 +36,34 @@ import ml.iamwhatiam.ag.constants.SerializeFormat;
  */
 public class PartnerConfigurationDomain extends BaseDomain {
 
-    private static final long serialVersionUID = -6422814185044069652L;
+    private static final long                   serialVersionUID = -6422814185044069652L;
 
     /**
      * 分配给合作方的标识
      * 
      * @see ml.iamwhatiam.ag.vo.FacadeVO#client
      */
-    private String            appId;
+    private String                              appId;
 
     /**
      * 加密算法，默认为RSA
      */
-    private String            transformation;
+    private String                              transformation;
 
     /**
      * 输出格式（如果请求时格式为空，考虑使用此输入格式），默认为JSON
      */
-    private SerializeFormat   format;
+    private SerializeFormat                     format;
 
     /**
      * 输出字符编码，默认为UTF-8
      */
-    private String            charset;
+    private String                              charset;
 
     /**
      * 合作方提供的公钥
      */
-    private String            key;
+    private String                              publicKey;
 
     /**
      * 签名算法（RSA加密时，默认为SHA1withRSA）或摘要算法：
@@ -83,17 +85,19 @@ public class PartnerConfigurationDomain extends BaseDomain {
      * </ul>
      * </ul>
      */
-    private String            signAlgorithm;
+    private String                              signAlgorithm;
 
     /**
      * 验签时原参数的拼接方式
      */
-    private Joint             joint;
+    private Joint                               joint;
 
     /**
      * 针对合作方的私钥
      */
-    private String            privateKey;
+    private String                              privateKey;
+
+    private List<GateWayParameterMappingDomain> parameterMappings;
 
     public String getAppId() {
         return appId;
@@ -127,12 +131,12 @@ public class PartnerConfigurationDomain extends BaseDomain {
         this.charset = charset;
     }
 
-    public String getKey() {
-        return key;
+    public String getPublicKey() {
+        return publicKey;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
     }
 
     public String getSignAlgorithm() {
@@ -159,12 +163,21 @@ public class PartnerConfigurationDomain extends BaseDomain {
         this.privateKey = privateKey;
     }
 
+    public List<GateWayParameterMappingDomain> getParameterMappings() {
+        return parameterMappings;
+    }
+
+    public void setParameterMappings(List<GateWayParameterMappingDomain> parameterMappings) {
+        this.parameterMappings = parameterMappings;
+    }
+
     @Override
     public String toString() {
         return "PartnerConfigurationDomain [appId=" + appId + ", transformation=" + transformation + ", format="
-                + format + ", charset=" + charset + ", key=" + key + ", signAlgorithm=" + signAlgorithm + ", joint="
-                + joint + ", privateKey=" + privateKey + ", id=" + id + ", creator=" + creator + ", gmtCreated="
-                + gmtCreated + ", modifier=" + modifier + ", gmtModified=" + gmtModified + ", deleted=" + deleted + "]";
+                + format + ", charset=" + charset + ", publicKey=" + publicKey + ", signAlgorithm=" + signAlgorithm
+                + ", joint=" + joint + ", privateKey=" + privateKey + ", parameterMappings=" + parameterMappings
+                + ", id=" + id + ", creator=" + creator + ", gmtCreated=" + gmtCreated + ", modifier=" + modifier
+                + ", gmtModified=" + gmtModified + ", deleted=" + deleted + "]";
     }
 
 }
