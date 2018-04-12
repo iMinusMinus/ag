@@ -103,8 +103,8 @@ public class ReflectionUtils {
         Object obj = target;
         try {
             if (!method.isAccessible()) {
-                log.info("method [{}.{}] cann't access under class '{}'", method.getDeclaringClass(), method.getName(),
-                        target.getClass());
+                log.debug("method [{}.{}] cann't access under class '{}'", method.getDeclaringClass(), method.getName(),
+                        target instanceof Class ? target : target.getClass());
                 method.setAccessible(true);
             }
             if ((method.getModifiers() & Modifier.STATIC) != 0) {
