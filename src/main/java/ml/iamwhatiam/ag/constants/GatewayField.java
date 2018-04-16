@@ -43,7 +43,7 @@ public enum GatewayField implements Serializable {
     TRANSFORMATION("transformation"), //may be configuration or as part of HTTP header
     VERSION("version"), //may be in URL path or no version
     TIMESTAMP("timestamp"), //may be part of HTTP header
-    SESSION_ID("sessionId"),//secret key difference in different sesion, keep the same on same session, null if not 1st time
+    SESSION_ID("sessionId"), //secret key difference in different session, keep the same on same session, null if not 1st time
     SECRET_KEY("secretKey"), //client user server RSA public key encrypt this secret key, then use this secret key encrypt content
     ALGORITHM_PARAMETER("algorithmParameter"),//initial vector for symmetric algorithm
     //

@@ -23,11 +23,11 @@
  */
 package ml.iamwhatiam.ag.dao;
 
-import java.util.List;
-
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.SelectKey;
 import org.springframework.stereotype.Repository;
 
 import ml.iamwhatiam.ag.domain.HttpBeanDomain;
@@ -47,6 +47,9 @@ public interface HttpConfigDao extends RpcConfigDao {
      * @param domain
      * @return
      */
+    @Insert("INSERT INTO http_bean (interface_name, api_version, application_name) VALUES (#{interfaceName}, #{version}, #{applicationName})")
+    @SelectKey(statement = {
+            "SELECT LAST_INSERT_ID() AS ID" }, keyProperty = "id", before = false, resultType = long.class)
     long save(HttpBeanDomain domain);
 
     /**
@@ -56,9 +59,10 @@ public interface HttpConfigDao extends RpcConfigDao {
      * @param version
      * @return
      */
-    @Select("SELECT id, interface_name, `version` FROM hsf_spring_consumer_bean WHERE interface_name = #{param1} AND version = #{param2}")
+    @Select("SELECT id, interface_name, api_version, application_name FROM http_bean WHERE interface_name = #{param1} AND api_version = #{param2}")
     @Results({ @Result(column = "id", property = "id"), @Result(column = "interface_name", property = "interfaceName"),
-            @Result(column = "version", property = "version"), })
+            @Result(column = "api_version", property = "version"),
+            @Result(column = "application_name", property = "applicationName"), })
     HttpBeanDomain findByInterfaceNameAndVersion(String interfaceName, String version);
 
 }
