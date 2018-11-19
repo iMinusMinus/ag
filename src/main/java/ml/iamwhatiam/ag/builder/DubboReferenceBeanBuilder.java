@@ -54,6 +54,8 @@ public class DubboReferenceBeanBuilder extends StubBeanBuilder {
 	
 	private final String CLASS = "com.alibaba.dubbo.config.spring.ReferenceBean";
 	private final String INTERFACE_ATTR = "interface";
+	private final String VERSION_ATTR = "version";
+	private final String GROUP_ATTR = "group";
 	private final String CHECK_ATTR = "check";
 	private final String ID = "id";
 
@@ -87,6 +89,12 @@ public class DubboReferenceBeanBuilder extends StubBeanBuilder {
 		builder.addPropertyValue(INTERFACE_ATTR, dubboBean.getInterfaceName());
 		builder.addPropertyValue(CHECK_ATTR, dubboBean.isCheck());
 		builder.addPropertyValue(ID, dubboBean.getInterfaceName());
+		if(dubboBean.getGroup() != null && dubboBean.getGroup().length() > 0) {
+			builder.addPropertyValue(GROUP_ATTR, dubboBean.getGroup());
+		}
+		if(dubboBean.getVersion() != null && dubboBean.getVersion().length() > 0) {
+			builder.addPropertyValue(VERSION_ATTR, dubboBean.getVersion());
+		}
 		if(dubboBean.getBeanId() != null && dubboBean.getBeanId().length() > 0) {
 			builder.addPropertyValue(ID, dubboBean.getBeanId());
 		}
