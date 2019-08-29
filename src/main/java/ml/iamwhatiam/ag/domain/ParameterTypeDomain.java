@@ -23,6 +23,10 @@
  */
 package ml.iamwhatiam.ag.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -32,55 +36,34 @@ import javax.validation.constraints.NotNull;
  * @author iMinusMinus
  * @since 2017-09-07
  */
+@Getter
+@Setter
+@ToString(callSuper = true)
 public class ParameterTypeDomain extends BaseDomain {
 
     private static final long serialVersionUID = -8402367432097798684L;
 
     /**
-     * 方法id
+     * 接口名称
+     */
+    private String interfaceName;
+
+    /**
+     * 方法名称
      */
     @NotNull
-    private long              mid;
+    private String methodName;
 
     /**
      * 参数所在方法位置
      */
     @Min(0)
-    private int               index;
+    private int index;
 
     /**
      * 参数类型，可能是数组、泛型、接口
      */
     @NotNull
-    private String            type;
-
-    public long getMid() {
-        return mid;
-    }
-
-    public void setMid(long mid) {
-        this.mid = mid;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    @Override
-    public String toString() {
-        return "{\"index\":" + index + ", \"type\":\"" + type + "\"}";
-    }
+    private String type;
 
 }
