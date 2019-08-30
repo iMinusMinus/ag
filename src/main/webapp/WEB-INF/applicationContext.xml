@@ -7,7 +7,7 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd" >
 
        <aop:aspectj-autoproxy/>
-       
+       <context:property-placeholder location="classpath:application.properties" />
        <bean id="rest" class="org.springframework.web.client.RestTemplate">
 	       	<property name="messageConverters">
 	       		<list>

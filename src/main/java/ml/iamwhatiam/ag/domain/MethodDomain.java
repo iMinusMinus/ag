@@ -27,6 +27,9 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import ml.iamwhatiam.ag.constants.Generic;
 
 /**
@@ -35,6 +38,9 @@ import ml.iamwhatiam.ag.constants.Generic;
  * @author iMinusMinus
  * @since 2017-09-07
  */
+@Getter
+@Setter
+@ToString(callSuper = true)
 public class MethodDomain extends BaseDomain {
 
     private static final long         serialVersionUID = -4672854286671661712L;
@@ -58,7 +64,8 @@ public class MethodDomain extends BaseDomain {
     private String                    methodName;
 
     /**
-     * 方法需要的额外前置后置处理类型，@see Rococo
+     * 方法需要的额外前置后置处理类
+     * @see ml.iamwhatiam.ag.constants.Rococo
      */
     private int                       rococo;
 
@@ -84,69 +91,6 @@ public class MethodDomain extends BaseDomain {
 
     public boolean hasGenericReturn() {
         return generic != null && (generic == Generic.OUT || generic == Generic.BOTH);
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    public String getInterfaceName() {
-        return interfaceName;
-    }
-
-    public void setInterfaceName(String interfaceName) {
-        this.interfaceName = interfaceName;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
-    public int getRococo() {
-        return rococo;
-    }
-
-    public void setRococo(int rococo) {
-        this.rococo = rococo;
-    }
-
-    public List<ParameterTypeDomain> getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(List<ParameterTypeDomain> parameters) {
-        this.parameters = parameters;
-    }
-
-    public String getReturnType() {
-        return returnType;
-    }
-
-    public void setReturnType(String returnType) {
-        this.returnType = returnType;
-    }
-
-    public Generic getGeneric() {
-        return generic;
-    }
-
-    public void setGeneric(Generic generic) {
-        this.generic = generic;
-    }
-
-    @Override
-    public String toString() {
-        return "{\"serviceName\":\"" + serviceName + "\", \"interfaceName\":\"" + interfaceName
-                + "\", \"methodName\":\"" + methodName + "\", \"rococo\":\"" + rococo + "\", \"parameters\":"
-                + parameters + ", \"returnType\":\"" + returnType + "\", \"generic\":\"" + generic + "\"}";
     }
 
 }

@@ -23,77 +23,89 @@
  */
 package ml.iamwhatiam.ag.domain;
 
-import javax.validation.constraints.NotNull;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ml.iamwhatiam.ag.constants.GatewayField;
-import ml.iamwhatiam.ag.constants.HttpParamLocation;
+import ml.iamwhatiam.ag.constants.Joint;
+import ml.iamwhatiam.ag.constants.SerializeFormat;
 
 /**
- * 网关个性化配置信息
+ * 针对合作方的个性化配置
  * 
  * @author iMinusMinus
- * @since 2018-02-09
+ * @since 2017-10-30
  */
 @Getter
 @Setter
-@ToString
-public class GateWayParameterMappingDomain extends BaseDomain {
+@ToString(callSuper = true)
+public class PartnerConfigDomain extends BaseDomain {
 
-    private static final long serialVersionUID = -5315293004766521859L;
+    private static final long                   serialVersionUID = -6422814185044069652L;
 
     /**
-     * 合作方标识
+     * 分配给合作方的标识
+     * 
+     * @see ml.iamwhatiam.ag.vo.FacadeVO#appId
      */
     private String appId;
 
     /**
-     * 字段名称（当参数在HTTP路径时，此值类型为int）
+     * 加密算法，默认为RSA
      */
-    @NotNull
-    private String filedName;
+    private String transformation;
 
     /**
-     * 1: 请求我方入参; 0: 我方响应出参
+     * 输出格式（如果请求时格式为空，考虑使用此输入格式），默认为JSON
      */
-    @NotNull
-    private int io;
+    private SerializeFormat format;
 
     /**
-     * 字段类型
+     * 输出字符编码，默认为UTF-8
      */
-    private String fieldType;
+    private String charset;
 
     /**
-     * 字段值类型转换器
+     * 合作方提供的公钥
      */
-    private String typeConverter;
+    private String publicKey;
 
     /**
-     * 字段格式
+     * 签名算法（RSA加密时，默认为SHA1withRSA）或摘要算法：
+     * <ul>
+     * <li>DSA
+     * <ul>
+     * <li>RawDSA</li>
+     * <li>SHA1withDSA</li>
+     * </ul>
+     * </li>
+     * <li>RSA</li>
+     * <ul>
+     * <li>MD2withRSA</li>
+     * <li>MD5withRSA</li>
+     * <li>SHA1withRSA</li>
+     * <li>SHA256withRSA</li>
+     * <li>SHA384withRSA</li>
+     * <li>SHA512withRSA</li>
+     * </ul>
+     * </ul>
      */
-    private String fieldFormat;
+    private String signAlgorithm;
 
     /**
-     * 映射字段名称
+     * 验签时原参数的拼接方式
      */
-    private GatewayField mappingName;
+    private Joint joint;
 
     /**
-     * 字段默认值
+     * 针对合作方的私钥
      */
-    private String defaultValue;
+    private String privateKey;
 
     /**
-     * 是否作为签名部分
+     * 参数映射
      */
-    private boolean signPart;
-
-    /**
-     * 参数位置
-     */
-    private HttpParamLocation location;
+    private List<GateWayParameterMappingDomain> parameterMappings;
 
 }

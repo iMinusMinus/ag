@@ -40,8 +40,6 @@ import ml.iamwhatiam.ag.support.DeserializerFactory;
 import ml.iamwhatiam.ag.support.Serializer;
 import ml.iamwhatiam.ag.support.SerializerFactory;
 import ml.iamwhatiam.ag.vo.FacadeVO;
-import ml.iamwhatiam.ag.web.DispatcherInterceptor;
-import ml.iamwhatiam.ag.web.ParameterInteceptor;
 
 /**
  * 登入验证及参数处理
@@ -50,7 +48,7 @@ import ml.iamwhatiam.ag.web.ParameterInteceptor;
  * @since 2017-10-04
  */
 @Component
-public class AuthenticationInteceptor implements DispatcherInterceptor, ParameterInteceptor {
+public class AuthenticationInteceptor {
 
     @Resource
     private ServiceConfigDao serviceConfig;

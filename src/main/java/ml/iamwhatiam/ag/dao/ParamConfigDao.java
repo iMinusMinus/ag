@@ -25,13 +25,7 @@ package ml.iamwhatiam.ag.dao;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectKey;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import ml.iamwhatiam.ag.domain.ParameterTypeDomain;
@@ -44,22 +38,44 @@ import ml.iamwhatiam.ag.domain.ParameterTypeDomain;
  */
 @Repository("paramConfig")
 public interface ParamConfigDao {
-	
-	@Insert("INSERT INTO parameter_type (mid, position, type_name) "
-			+ "VALUES (#{mid}, #{index}, #{type})")
+
+	/**
+	 * 保存服务参数
+	 * @param domain
+	 * @return
+	 */
+	@Insert("INSERT INTO parameter_type (interface_name, method_name, position, type_name) "
+			+ "VALUES (#{interfaceName}, #{methodName}, #{index}, #{type})")
 	@SelectKey(statement = {
     "SELECT LAST_INSERT_ID() AS ID" }, keyProperty = "id", before = false, resultType = long.class)
-	long save(ParameterTypeDomain domain);
-	
+	int save(ParameterTypeDomain domain);
+
+	/**
+	 * 更新服务参数
+	 * @param domain
+	 * @return
+	 */
 	@Update("UPDATE parameter_type set position = #{index}, type_name = #{type} WHERE id = #{id}")
 	int update(ParameterTypeDomain domain);
-	
-	@Delete("DELETE FROM parameter_type WHERE id = #{id}")
-	int delete(long id);
 
-    @Select("SELECT * FROM parameter_type p WHERE p.mid = #{id} ORDER BY p.position")
-    @Results({ @Result(id = true, column = "id", property = "id"), @Result(column = "mid", property = "mid"),
+	/**
+	 * 删除服务参数
+	 * @param id
+	 * @return
+	 */
+	@Delete("DELETE FROM parameter_type WHERE id = #{id}")
+	int delete(@Param("id") long id);
+
+	/**
+	 * 根据类名与方法名，查询参数
+	 * @param interfaceName
+	 * @param methodName
+	 * @return
+	 */
+    @Select("SELECT id,interface_name,method_name,position,type_name FROM parameter_type p WHERE p.interface_name = #{interfaceName} AND p.method_name = #{methodName} ORDER BY p.position")
+    @Results({ @Result(id = true, column = "id", property = "id"), @Result(column = "interface_name", property = "interfaceName"),
+			@Result(column = "method_name", property = "methodName"),
             @Result(column = "position", property = "index"), @Result(column = "type_name", property = "type") })
-    List<ParameterTypeDomain> findByMethodId(long mid);
+    List<ParameterTypeDomain> findByMethod(@Param("interfaceName") String interfaceName, @Param("methodName") String methodName);
 
 }

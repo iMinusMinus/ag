@@ -51,7 +51,7 @@ public class HsfDispatcherServiceImpl extends RpcDispatcherService {
     }
     
     /**
-     * @see HsfConsumerBeanBuilder#getBeanName
+     * @see ml.iamwhatiam.ag.builder.HsfConsumerBeanBuilder#getBeanName
      */
     @Override
     protected String getBeanName(String interfaceName, String version) {
@@ -62,6 +62,7 @@ public class HsfDispatcherServiceImpl extends RpcDispatcherService {
      * 设置线程上下文
      */
     @Deprecated
+    @Override
     protected final void processBeforeInvoke(String beanName) {
         try {
             Object factoryBean = applicationContext.getBean(BeanFactory.FACTORY_BEAN_PREFIX + beanName);

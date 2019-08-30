@@ -23,6 +23,10 @@
  */
 package ml.iamwhatiam.ag.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.util.List;
 
 /**
@@ -35,10 +39,19 @@ import java.util.List;
  * @see com.alibaba.dubbo.config.AbstractReferenceConfig
  * @see com.alibaba.dubbo.config.ReferenceConfig
  */
-
+@Getter
+@Setter
+@ToString(callSuper = true)
 public class DubboReferenceBeanDomain extends RpcBeanDomain {
 
 	private static final long serialVersionUID = -3251566072377464696L;
+
+	public static final String DUBBO = "dubbo";
+
+	@Override
+	public String getRpcType() {
+		return DUBBO;
+	}
 	
 	//AbstractMethodConfig
 	/**
@@ -214,10 +227,6 @@ public class DubboReferenceBeanDomain extends RpcBeanDomain {
 	 */
 	private String protocol;
 
-	public String getRpcType() {
-		return "Dubbo";
-	}
-	
 	/**
 	 * 
 	 * 方法配置
@@ -226,6 +235,9 @@ public class DubboReferenceBeanDomain extends RpcBeanDomain {
 	 * @since 2017-11-04
 	 * @see com.alibaba.dubbo.config.MethodConfig
 	 */
+	@Getter
+	@Setter
+	@ToString(callSuper = true)
 	public class MethodConfigDomain extends BaseDomain {
 
 		private static final long serialVersionUID = 2923337304942296974L;
@@ -250,214 +262,6 @@ public class DubboReferenceBeanDomain extends RpcBeanDomain {
 		 */
 	    private String            onInvokeMethod;
 		
-	}
-
-	public String getBeanId() {
-		return beanId;
-	}
-
-	public void setBeanId(String beanId) {
-		this.beanId = beanId;
-	}
-
-	public String getLocal() {
-		return local;
-	}
-
-	public void setLocal(String local) {
-		this.local = local;
-	}
-
-	public String getProxy() {
-		return proxy;
-	}
-
-	public void setProxy(String proxy) {
-		this.proxy = proxy;
-	}
-
-	public String getCluster() {
-		return cluster;
-	}
-
-	public void setCluster(String cluster) {
-		this.cluster = cluster;
-	}
-
-	public String getFilter() {
-		return filter;
-	}
-
-	public void setFilter(String filter) {
-		this.filter = filter;
-	}
-
-	public String getListener() {
-		return listener;
-	}
-
-	public void setListener(String listener) {
-		this.listener = listener;
-	}
-
-	public String getOwner() {
-		return owner;
-	}
-
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
-
-	public String getApplication() {
-		return application;
-	}
-
-	public void setApplication(String application) {
-		this.application = application;
-	}
-
-	public String getModule() {
-		return module;
-	}
-
-	public void setModule(String module) {
-		this.module = module;
-	}
-
-	public List<String> getRegistries() {
-		return registries;
-	}
-
-	public void setRegistries(List<String> registries) {
-		this.registries = registries;
-	}
-
-	public String getMonitor() {
-		return monitor;
-	}
-
-	public void setMonitor(String monitor) {
-		this.monitor = monitor;
-	}
-
-	public int getCallbacks() {
-		return callbacks;
-	}
-
-	public void setCallbacks(int callbacks) {
-		this.callbacks = callbacks;
-	}
-
-	public String getOnConnect() {
-		return onConnect;
-	}
-
-	public void setOnConnect(String onConnect) {
-		this.onConnect = onConnect;
-	}
-
-	public String getOnDisconnect() {
-		return onDisconnect;
-	}
-
-	public void setOnDisconnect(String onDisconnect) {
-		this.onDisconnect = onDisconnect;
-	}
-
-	public String getVersion() {
-		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
-	public String getGroup() {
-		return group;
-	}
-
-	public void setGroup(String group) {
-		this.group = group;
-	}
-
-	public boolean isCheck() {
-		return check;
-	}
-
-	public void setCheck(boolean check) {
-		this.check = check;
-	}
-
-	public boolean isInit() {
-		return init;
-	}
-
-	public void setInit(boolean init) {
-		this.init = init;
-	}
-
-	public boolean isGeneric() {
-		return generic;
-	}
-
-	public void setGeneric(boolean generic) {
-		this.generic = generic;
-	}
-
-	public String getSticky() {
-		return sticky;
-	}
-
-	public void setSticky(String sticky) {
-		this.sticky = sticky;
-	}
-
-	public boolean isReconnect() {
-		return reconnect;
-	}
-
-	public void setReconnect(boolean reconnect) {
-		this.reconnect = reconnect;
-	}
-
-	public boolean isLazy() {
-		return lazy;
-	}
-
-	public void setLazy(boolean lazy) {
-		this.lazy = lazy;
-	}
-
-	public List<MethodConfigDomain> getMethods() {
-		return methods;
-	}
-
-	public void setMethods(List<MethodConfigDomain> methods) {
-		this.methods = methods;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getClient() {
-		return client;
-	}
-
-	public void setClient(String client) {
-		this.client = client;
-	}
-
-	public String getProtocol() {
-		return protocol;
-	}
-
-	public void setProtocol(String protocol) {
-		this.protocol = protocol;
 	}
 
 }

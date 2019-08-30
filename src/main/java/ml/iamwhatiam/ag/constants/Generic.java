@@ -23,16 +23,34 @@
  */
 package ml.iamwhatiam.ag.constants;
 
+import lombok.Getter;
+
 /**
  * 泛型
  * 
  * @author iMinusMinus
  */
+@Getter
 public enum Generic {
 
-    NONE,
-    IN,
-    OUT,
-    BOTH;
+    NONE(0),
+    IN(1),
+    OUT(2),
+    BOTH(4);
+
+    private final int number;
+
+    private Generic(int number) {
+        this.number = number;
+    }
+
+    public static Generic getInstance(int number) {
+        for(Generic instance : Generic.values()) {
+            if(instance.number == number) {
+                return instance;
+            }
+        }
+        return null;
+    }
 
 }

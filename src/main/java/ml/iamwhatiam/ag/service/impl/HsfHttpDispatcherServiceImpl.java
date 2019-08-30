@@ -29,8 +29,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import ml.iamwhatiam.ag.domain.HSFSpringConsumerBeanDomain;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -53,11 +53,10 @@ import ml.iamwhatiam.ag.vo.HttpRequestVO;
  * @since 2017-09-20
  * @version 2018-01-22
  */
+@Slf4j
 public class HsfHttpDispatcherServiceImpl extends HttpDispatcherService {
 
-    private Logger          log            = LoggerFactory.getLogger(HsfHttpDispatcherServiceImpl.class);
-
-    private final String    QUERY_STRING   = "$1=%s&$2=%s";
+    private final String    QUERY_STRING   = "$0=%s&$1=%s";
 
     private final String    GENERIC_METHOD = "$invoke";
 
@@ -76,9 +75,10 @@ public class HsfHttpDispatcherServiceImpl extends HttpDispatcherService {
 
     @Override
     public boolean support(String type) {
-        return "HSF".equalsIgnoreCase(type) || super.support(type);
+        return HSFSpringConsumerBeanDomain.HSF.equalsIgnoreCase(type) || super.support(type);
     }
 
+    @Override
     protected final String getRequestUrl(String serviceName, MethodDomain md, String version) {
         String target = subscriber.getNews(md.getInterfaceName() + ":" + version);
         if (target == null) {//请求地址和端口：ip:port
@@ -107,6 +107,7 @@ public class HsfHttpDispatcherServiceImpl extends HttpDispatcherService {
         return header;
     }
 
+    @Override
     protected final HttpHeaders getRequestHeader() {
         return format == SerializeFormat.JSON ? getJsonHeader() : getDefaultHeader();
     }
@@ -131,6 +132,7 @@ public class HsfHttpDispatcherServiceImpl extends HttpDispatcherService {
      * @see com.taobao.hsf.remoting.netty.server.http.processor.UglyTypeHttpRequestProcessor#process
      * @see com.taobao.hsf.remoting.provider.ProviderProcessor#handleRequest0
      */
+    @Override
     protected final Object recombineBody(HttpRequestVO req, MethodDomain md) {
         Serializer serializer = SerializerFactory.getSerializer(SerializeFormat.JSON);
         Object data = null;
@@ -189,6 +191,7 @@ public class HsfHttpDispatcherServiceImpl extends HttpDispatcherService {
     /**
      * HSF返回的格式为text/plain，但正常返回其实是JSON
      */
+    @Override
     protected final Object handleResponseBody(HttpEntity<String> response, Type returnType) {
         try {
             Deserializer deserializer = DeserializerFactory.getDeserializer(SerializeFormat.JSON);

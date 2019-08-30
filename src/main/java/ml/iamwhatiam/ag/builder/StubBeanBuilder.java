@@ -25,8 +25,7 @@ package ml.iamwhatiam.ag.builder;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -44,9 +43,8 @@ import ml.iamwhatiam.ag.domain.RpcBeanDomain;
  * @author iMinusMinus
  * @since 2017-09-25
  */
+@Slf4j
 public abstract class StubBeanBuilder implements ApplicationContextAware, InitializingBean {
-
-    private Logger               log = LoggerFactory.getLogger(StubBeanBuilder.class);
 
     protected ApplicationContext applicationContext;
 
@@ -98,6 +96,7 @@ public abstract class StubBeanBuilder implements ApplicationContextAware, Initia
      * @see
      * org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
+    @Override
     public void afterPropertiesSet() throws Exception {
         log.info("开始加载数据库RPC stub bean配置");
         //1. load bean definition
@@ -136,6 +135,7 @@ public abstract class StubBeanBuilder implements ApplicationContextAware, Initia
      * org.springframework.context.ApplicationContextAware#setApplicationContext
      * (org.springframework.context.ApplicationContext)
      */
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }

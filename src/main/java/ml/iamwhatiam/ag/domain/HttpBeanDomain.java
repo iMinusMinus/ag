@@ -23,38 +23,33 @@
  */
 package ml.iamwhatiam.ag.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * 使用HTTP分发服务的实体
  * 
  * @author iMinusMinus
  * @since 2017-09-23
  */
+@Getter
+@Setter
+@ToString(callSuper = true)
 public class HttpBeanDomain extends RpcBeanDomain {
 
     private static final long serialVersionUID = -3199277225392588657L;
+
+    public static final String HTTP = "http";
 
     /**
      * 系统名称
      */
     private String            applicationName;
 
-    public String getApplicationName() {
-        return applicationName;
-    }
-
-    public void setApplicationName(String applicationName) {
-        this.applicationName = applicationName;
-    }
-
     @Override
     public String getRpcType() {
-        return "HTTP";
-    }
-
-    @Override
-    public String toString() {
-        return "HttpBeanDomain [applicationName=" + applicationName + ", interfaceName=" + interfaceName + ", version="
-                + version + "]";
+        return HTTP;
     }
 
 }

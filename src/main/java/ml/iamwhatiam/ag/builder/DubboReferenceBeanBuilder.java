@@ -27,8 +27,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 
 import ml.iamwhatiam.ag.dao.DubboReferenceConfigDao;
@@ -44,10 +43,8 @@ import ml.iamwhatiam.ag.domain.RpcBeanDomain;
  * @see com.alibaba.dubbo.config.spring.schema.DubboBeanDefinitionParser
  * @see com.alibaba.dubbo.config.spring.ReferenceBean
  */
-
+@Slf4j
 public class DubboReferenceBeanBuilder extends StubBeanBuilder {
-	
-	private Logger log = LoggerFactory.getLogger(DubboReferenceBeanBuilder.class);
 	
 	@Resource
 	private DubboReferenceConfigDao dubboConfig;
@@ -59,7 +56,7 @@ public class DubboReferenceBeanBuilder extends StubBeanBuilder {
 	private final String CHECK_ATTR = "check";
 	private final String ID = "id";
 
-	
+	@Override
 	protected List<? extends RpcBeanDomain> loadDefinition() {
 		List<DubboReferenceBeanDomain> list = dubboConfig.load();
 		log.debug("load Dubbo ReferenceBean definitions: {}", list.size());
@@ -82,6 +79,7 @@ public class DubboReferenceBeanBuilder extends StubBeanBuilder {
 	 * 构建Dubbo ReferenceBean
 	 * @param beanDefintion
 	 */
+	@Override
 	protected BeanDefinitionBuilder buildBeanDefintion(RpcBeanDomain beanDefintion) {
 		DubboReferenceBeanDomain dubboBean = (DubboReferenceBeanDomain) beanDefintion;
 		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(CLASS);
@@ -100,14 +98,6 @@ public class DubboReferenceBeanBuilder extends StubBeanBuilder {
 		}
 		//add other property here
 		return builder;
-	}
-
-	public DubboReferenceConfigDao getDubboConfig() {
-		return dubboConfig;
-	}
-
-	public void setDubboConfig(DubboReferenceConfigDao dubboConfig) {
-		this.dubboConfig = dubboConfig;
 	}
 
 }

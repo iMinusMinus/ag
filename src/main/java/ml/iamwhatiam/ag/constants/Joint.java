@@ -7,12 +7,15 @@
  */
 package ml.iamwhatiam.ag.constants;
 
+import lombok.Getter;
+
 /**
  * 构成签名的多个字段连接方式
  * 
  * @author iMinusMinus
  * @since 2017-10-30
  */
+@Getter
 public enum Joint {
 
     NONE("", "", "", ""), //各字段转为String后直接拼接，即value1value2。不同的合作方入参命名可能不一致，此方式在排序一致情况下不影响计算签名
@@ -45,22 +48,6 @@ public enum Joint {
         this.separator = separator;
         this.follow = follow;
         this.end = end;
-    }
-
-    public String getBegin() {
-        return begin;
-    }
-
-    public String getEnd() {
-        return end;
-    }
-
-    public String getSeparator() {
-        return separator;
-    }
-
-    public String getFollow() {
-        return follow;
     }
 
 }

@@ -31,7 +31,6 @@ import ml.iamwhatiam.ag.constants.Default;
 import ml.iamwhatiam.ag.exceptions.InteceptException;
 import ml.iamwhatiam.ag.service.CacheService;
 import ml.iamwhatiam.ag.vo.FacadeVO;
-import ml.iamwhatiam.ag.web.DispatcherInterceptor;
 
 /**
  * 权限校验
@@ -40,7 +39,7 @@ import ml.iamwhatiam.ag.web.DispatcherInterceptor;
  * @since 2017-10-31
  */
 @Component
-public class PrivilegeInteceptor implements DispatcherInterceptor {
+public class PrivilegeInteceptor {
 
     @Resource
     private CacheService cache;
@@ -52,9 +51,8 @@ public class PrivilegeInteceptor implements DispatcherInterceptor {
         return 0x70000000;
     }
 
-    @Override
     public boolean preDispatch(FacadeVO param, Object dispatcher) throws InteceptException {
-        Object value = cache.get(String.format(Default.PRIVILEGE_KEY.get(), param.getClient(), param.getService()));
+        Object value = cache.get(String.format(Default.PRIVILEGE_KEY.get(), param.getAppId(), param.getService()));
         if (value == null) {
             throw new InteceptException("未授权");
         }

@@ -27,6 +27,9 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import ml.iamwhatiam.ag.constants.SerializeFormat;
 
 /**
@@ -35,6 +38,9 @@ import ml.iamwhatiam.ag.constants.SerializeFormat;
  * @author iMinusMinus
  * @since 2017-09-11
  */
+@Getter
+@Setter
+@ToString
 public class FacadeVO implements Serializable {
 
     private static final long serialVersionUID = 7671044275686455797L;
@@ -42,7 +48,7 @@ public class FacadeVO implements Serializable {
     /**
      * 调用者标识
      */
-    private String            client;
+    private String            appId;
 
     /**
      * 参数
@@ -86,84 +92,5 @@ public class FacadeVO implements Serializable {
      * 字符编码（仅针对参数部分）:UTF-8
      */
     private String            charset;
-
-    public String getClient() {
-        return client;
-    }
-
-    public void setClient(String client) {
-        this.client = client;
-    }
-
-    public String getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(String parameters) {
-        this.parameters = parameters;
-    }
-
-    public SerializeFormat getFormat() {
-        return format;
-    }
-
-    public void setFormat(SerializeFormat format) {
-        this.format = format;
-    }
-
-    public String getSign() {
-        return sign;
-    }
-
-    public void setSign(String sign) {
-        this.sign = sign;
-    }
-
-    public String getSignType() {
-        return signType;
-    }
-
-    public void setSignType(String signType) {
-        this.signType = signType;
-    }
-
-    public String getService() {
-        return service;
-    }
-
-    public void setService(String service) {
-        this.service = service;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public String getCharset() {
-        return charset;
-    }
-
-    public void setCharset(String charset) {
-        this.charset = charset;
-    }
-
-    @Override
-    public String toString() {
-        return "FacadeVO [client=" + client + ", parameters=" + parameters + ", format=" + format + ", sign=" + sign
-                + ", signType=" + signType + ", service=" + service + ", timetamp=" + timestamp + ", version=" + version
-                + ", charset=" + charset + "]";
-    }
 
 }

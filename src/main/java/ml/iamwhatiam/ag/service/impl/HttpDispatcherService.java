@@ -29,6 +29,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
+import ml.iamwhatiam.ag.domain.HttpBeanDomain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -56,9 +58,8 @@ import ml.iamwhatiam.ag.vo.HttpRequestVO;
  * @author iMinusMinus
  * @since 2017-09-15
  */
+@Slf4j
 public abstract class HttpDispatcherService implements DispatcherService {
-
-    private Logger             log = LoggerFactory.getLogger(HttpDispatcherService.class);
 
     @Resource
     protected ServiceConfigDao serviceConfig;
@@ -66,8 +67,9 @@ public abstract class HttpDispatcherService implements DispatcherService {
     @Resource
     protected RestTemplate     rest;
 
+    @Override
     public boolean support(String type) {
-        return "HTTP".equalsIgnoreCase(type);
+        return HttpBeanDomain.HTTP.equalsIgnoreCase(type);
     }
 
     /**
@@ -168,6 +170,7 @@ public abstract class HttpDispatcherService implements DispatcherService {
      * @throws NoSuchPublisherException
      * @throws RestClientException
      */
+    @Override
     public final Object doDispatch(FacadeVO request) {
         MethodDomain method = serviceConfig.findByServiceName(request.getService());
         if (method == null) {
@@ -185,22 +188,6 @@ public abstract class HttpDispatcherService implements DispatcherService {
         Object result = handleResponseBody(response, extractReturnType(method));
         log.info("服务[{}]调用返回结果：{}", request.getService(), result);
         return result;
-    }
-
-    public ServiceConfigDao getServiceConfig() {
-        return serviceConfig;
-    }
-
-    public void setServiceConfig(ServiceConfigDao serviceConfig) {
-        this.serviceConfig = serviceConfig;
-    }
-
-    public RestTemplate getRest() {
-        return rest;
-    }
-
-    public void setRest(RestTemplate rest) {
-        this.rest = rest;
     }
 
 }

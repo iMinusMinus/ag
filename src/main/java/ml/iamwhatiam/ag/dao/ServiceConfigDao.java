@@ -23,14 +23,7 @@
  */
 package ml.iamwhatiam.ag.dao;
 
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Many;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectKey;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
 import org.springframework.stereotype.Repository;
 
@@ -45,31 +38,56 @@ import ml.iamwhatiam.ag.domain.MethodDomain;
 @Repository("serviceConfig")
 public interface ServiceConfigDao {
 
-    @Insert("INSERT INTO service (service_name, interface_name, method_name, rococo, return_type) "
-            + "VALUES (#{serviceName}, #{interfaceName}, #{methodName}, #{rococo}, #{returnType})")
+    /**
+     * 保存服务
+     * @param method
+     * @return
+     */
+    @Insert("INSERT INTO service (service_name, interface_name, method_name, rococo, return_type, generic) "
+            + "VALUES (#{serviceName}, #{interfaceName}, #{methodName}, #{rococo}, #{returnType}, #{generic})")
     /* oracle before, mysql after */
     @SelectKey(statement = {
             "SELECT LAST_INSERT_ID() AS ID" }, keyProperty = "id", before = false, resultType = long.class)
-    long save(MethodDomain method);
+    int save(MethodDomain method);
 
+    /**
+     * 更新服务信息
+     * @param domain
+     * @return
+     */
     @Update("<script>UPDATE service <trim prefix = \"SET\" suffixOverrides = \",\">"
-            + "<if test=\"serviceName != null\">service_name = #{serviceName}</if>"
-            + "<if test=\"interfaceName != null\">interface_name = interfaceName</if>"
-            + "<if test=\"methodName != null\">method_name = #{methodName}</if>"
-            + "<if test=\"rococo != null\">rococo = rococo</if>"
-            + "<if test=\"returnType != null\">return_type = returnType</if></trim> " + "WHERE id = #{id}</script>")
+            + "<if test=\"serviceName != null\">service_name = #{serviceName},</if>"
+            + "<if test=\"interfaceName != null\">interface_name = #{interfaceName},</if>"
+            + "<if test=\"methodName != null\">method_name = #{methodName},</if>"
+            + "<if test=\"rococo != null\">rococo = #{rococo},</if>"
+            + "<if test=\"generic != null\">generic = #{generic},</if>"
+            + "<if test=\"returnType != null\">return_type = #{returnType},</if></trim> "
+            + "WHERE id = #{id}</script>")
     int update(MethodDomain domain);
 
+    /**
+     * 删除服务
+     * @param id
+     * @return
+     */
     @Delete("DELETE FROM service WHERE id = #{id}")
     int delete(long id);
 
+    /**
+     * 查询服务信息（接口名、方法名、参数信息）
+     * @param serviceName
+     * @return
+     */
     @Results({ @Result(id = true, column = "id", property = "id"),
             @Result(column = "service_name", property = "serviceName"),
             @Result(column = "interface_name", property = "interfaceName"),
-            @Result(column = "method_name", property = "methodName"), @Result(column = "rococo", property = "rococo"),
+            @Result(column = "method_name", property = "methodName"),
+            @Result(column = "rococo", property = "rococo"),
             @Result(column = "return_type", property = "returnType"),
-            @Result(column = "id", property = "parameters", many = @Many(select = "ml.iamwhatiam.ag.dao.ParamConfigDao.findByMethodId", fetchType = FetchType.LAZY)) })
-    @Select("SELECT * FROM service s WHERE s.service_name = #{serviceName}")
-    MethodDomain findByServiceName(String serviceName);
+            @Result(column = "generic", property = "generic"),
+            @Result(column = "{interfaceName=interface_name,methodName=method_name}", property = "parameters", //some version of mybatis has bug when handling composite column
+                    many = @Many(select = "ml.iamwhatiam.ag.dao.ParamConfigDao.findByMethod", fetchType = FetchType.LAZY)) })
+    @Select("SELECT id,service_name,interface_name,method_name,rococo,return_type,generic FROM service s WHERE s.service_name = #{serviceName}")
+    MethodDomain findByServiceName(@Param("serviceName") String serviceName);
 
 }

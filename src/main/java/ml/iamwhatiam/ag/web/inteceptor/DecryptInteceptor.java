@@ -29,20 +29,19 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import ml.iamwhatiam.ag.dao.PartnerConfigDao;
 import org.springframework.stereotype.Component;
 
 import ml.iamwhatiam.ag.constants.Joint;
 import ml.iamwhatiam.ag.constants.Rococo;
 import ml.iamwhatiam.ag.constants.SerializeFormat;
-import ml.iamwhatiam.ag.dao.PartnerConfigDao;
 import ml.iamwhatiam.ag.dao.ServiceConfigDao;
 import ml.iamwhatiam.ag.domain.MethodDomain;
-import ml.iamwhatiam.ag.domain.PartnerConfigurationDomain;
+import ml.iamwhatiam.ag.domain.PartnerConfigDomain;
 import ml.iamwhatiam.ag.exceptions.InteceptException;
 import ml.iamwhatiam.ag.support.SerializerFactory;
 import ml.iamwhatiam.ag.util.SecurityUtils;
 import ml.iamwhatiam.ag.vo.FacadeVO;
-import ml.iamwhatiam.ag.web.ParameterInteceptor;
 
 /**
  * 安全阻截: 验签和解密
@@ -51,7 +50,7 @@ import ml.iamwhatiam.ag.web.ParameterInteceptor;
  * @since 2017-11-06
  */
 @Component
-public class DecryptInteceptor implements ParameterInteceptor {
+public class DecryptInteceptor {
 
     @Resource
     private ServiceConfigDao serviceConfig;
@@ -81,7 +80,7 @@ public class DecryptInteceptor implements ParameterInteceptor {
     }
 
     public void intecept(FacadeVO param) {
-        PartnerConfigurationDomain config = partnerConfig.findByClient(param.getClient());
+        PartnerConfigDomain config = partnerConfig.findByAppid(param.getAppId());
         verifyAndDecrypt(param, config);
     }
 
@@ -92,11 +91,11 @@ public class DecryptInteceptor implements ParameterInteceptor {
      * @param config
      * @return
      */
-    private void verifyAndDecrypt(FacadeVO vo, PartnerConfigurationDomain config) {
+    private void verifyAndDecrypt(FacadeVO vo, PartnerConfigDomain config) {
         String signature = vo.getSign();
         String ciphered = vo.getParameters();
         Map<String, String> origin = new HashMap<String, String>();
-        origin.put("client", vo.getClient());
+        origin.put("client", vo.getAppId());
         origin.put("parameters", vo.getParameters());
         origin.put("format", vo.getFormat().name().toLowerCase());
         origin.put("sign", vo.getSign());
@@ -105,14 +104,14 @@ public class DecryptInteceptor implements ParameterInteceptor {
         origin.put("timestamp", String.valueOf(vo.getTimestamp()));
         origin.put("version", vo.getVersion());
         origin.put("charset", vo.getCharset());
-        if (config.getMapping() != null && !config.getMapping().isEmpty()) {
-            for (Map.Entry<String, String> entry : config.getMapping().entrySet()) {
-                if (entry.getValue() == null) {
-                    origin.remove(entry.getKey());
-                } else {
-                    origin.put(entry.getValue(), origin.get(entry.getKey()));
-                }
-            }
+        if (config.getParameterMappings() != null && !config.getParameterMappings().isEmpty()) {
+//            for (Map.Entry<String, String> entry : config.getParameterMappings().entrySet()) {
+//                if (entry.getValue() == null) {
+//                    origin.remove(entry.getKey());
+//                } else {
+//                    origin.put(entry.getValue(), origin.get(entry.getKey()));
+//                }
+//            }
         }
         byte[] data = null;
         if (origin.size() == 0) {
@@ -121,7 +120,7 @@ public class DecryptInteceptor implements ParameterInteceptor {
             String content = beforeSign(origin, config.getJoint());
             data = vo.getCharset() == null ? content.getBytes() : content.getBytes(Charset.forName(vo.getCharset()));
         }
-        if (!SecurityUtils.verify(signature, data, vo.getSignType(), config.getKey())) {
+        if (!SecurityUtils.verify(signature, data, vo.getSignType(), config.getPrivateKey())) {
             throw new SecurityException("验证签名失败");
         }
         byte[] plain = SecurityUtils.decrypt(config.getTransformation(), ciphered, config.getPrivateKey());

@@ -23,6 +23,8 @@
  */
 package ml.iamwhatiam.ag.constants;
 
+import lombok.Getter;
+
 import java.io.Serializable;
 
 /**
@@ -31,9 +33,10 @@ import java.io.Serializable;
  * @author iMinusMinus
  * @since 2018-03-27
  */
+@Getter
 public enum GatewayField implements Serializable {
 
-    @Deprecated APP_ID("appId"), //move to URL path
+    APP_ID("appId"), //move to URL path
     SIGN("sign"), //may be part of HTTP header
     SIGN_TYPE("signType"), //may be configuration
     API("api"), //may be in URL path
@@ -50,10 +53,6 @@ public enum GatewayField implements Serializable {
     ;
 
     private String fieldName;
-
-    public String getFieldName() {
-        return fieldName;
-    }
 
     GatewayField(String fieldName) {
         this.fieldName = fieldName;

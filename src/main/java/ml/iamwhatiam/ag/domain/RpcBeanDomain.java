@@ -23,12 +23,19 @@
  */
 package ml.iamwhatiam.ag.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * 服务接口基础配置
  * 
  * @author iMinusMinus
  * @since 2017-09-22
  */
+@Getter
+@Setter
+@ToString(callSuper = true)
 public abstract class RpcBeanDomain extends BaseDomain {
 
     private static final long serialVersionUID = -3666474780900016010L;
@@ -50,26 +57,5 @@ public abstract class RpcBeanDomain extends BaseDomain {
      * @return RPC类型
      */
     public abstract String getRpcType();
-
-    public String getInterfaceName() {
-        return interfaceName;
-    }
-
-    public void setInterfaceName(String interfaceName) {
-        this.interfaceName = interfaceName;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    @Override
-    public String toString() {
-        return "\"interfaceName\":" + interfaceName + "\", \"version\":\"" + version + "\"";
-    }
 
 }

@@ -27,8 +27,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 
 import ml.iamwhatiam.ag.dao.HsfConsumerConfigDao;
@@ -41,9 +40,8 @@ import ml.iamwhatiam.ag.domain.RpcBeanDomain;
  * @author liangming
  * @since 2017-09-07
  */
+@Slf4j
 public class HsfConsumerBeanBuilder extends StubBeanBuilder {
-
-    private Logger               log            = LoggerFactory.getLogger(HsfConsumerBeanBuilder.class);
 
     @Resource
     private HsfConsumerConfigDao hsfConfig;
@@ -51,11 +49,11 @@ public class HsfConsumerBeanBuilder extends StubBeanBuilder {
     /**
      * HSFSpringConsumerBean属性
      */
-    private final String         CLASS          = "com.taobao.hsf.app.spring.util.HSFSpringConsumerBean";
-    private final String         INIT_METHOD    = "init";
-    private final String         INTERFACE_NAME = "interfaceName";
-    private final String         VERSION        = "version";
-    private final String         GROUP          = "group";
+    private final String CLASS = "com.taobao.hsf.app.spring.util.HSFSpringConsumerBean";
+    private final String INIT_METHOD = "init";
+    private final String INTERFACE_NAME = "interfaceName";
+    private final String VERSION = "version";
+    private final String GROUP = "group";
 
     /**
      * 加载HSF配置
@@ -89,14 +87,6 @@ public class HsfConsumerBeanBuilder extends StubBeanBuilder {
         }
         //add other property here
         return builder;
-    }
-
-    public HsfConsumerConfigDao getHsfConfig() {
-        return hsfConfig;
-    }
-
-    public void setHsfConfig(HsfConsumerConfigDao hsfConfig) {
-        this.hsfConfig = hsfConfig;
     }
 
     /**

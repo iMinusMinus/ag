@@ -78,6 +78,7 @@ public abstract class RpcDispatcherService implements DispatcherService, Applica
      * @throws BeansException
      * @throws RpcInvokingException
      */
+    @Override
     public final Object doDispatch(FacadeVO request) {
         MethodDomain method = serviceConfig.findByServiceName(request.getService());
         if (method == null) {
@@ -144,6 +145,7 @@ public abstract class RpcDispatcherService implements DispatcherService, Applica
      * org.springframework.context.ApplicationContextAware#setApplicationContext
      * (org.springframework.context.ApplicationContext)
      */
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }

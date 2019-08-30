@@ -45,13 +45,15 @@ public class DubboDispatcherServiceImpl extends RpcDispatcherService {
 	 * 
 	 * @param type
 	 */
+	@Override
 	public boolean support(String type) {
-		return "Dubbo".equalsIgnoreCase(type);
+		return DubboReferenceBeanDomain.DUBBO.equalsIgnoreCase(type);
 	}
 	
 	/**
-	 * @see DubboReferenceBeanBuilder#getBeanName
+	 * @see ml.iamwhatiam.ag.builder.DubboReferenceBeanBuilder#getBeanName
 	 */
+	@Override
 	protected String getBeanName(String interfaceName, String version) {
 		DubboReferenceBeanDomain domain = dubboConfig.findByInterfaceNameAndVersion(interfaceName, version);
 		if(domain != null && domain.getBeanId() != null && domain.getBeanId().length() > 0) {

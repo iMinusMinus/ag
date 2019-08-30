@@ -23,6 +23,10 @@
  */
 package ml.iamwhatiam.ag.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -32,6 +36,9 @@ import java.util.Date;
  * @author liangming
  * @since 2017-09-07
  */
+@Getter
+@Setter
+@ToString
 public abstract class BaseDomain implements Serializable {
 
     private static final long serialVersionUID = 4117589307425029081L;
@@ -47,59 +54,5 @@ public abstract class BaseDomain implements Serializable {
     protected Date            gmtModified;
 
     protected boolean         deleted;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
-    public Date getGmtCreated() {
-        return gmtCreated;
-    }
-
-    public void setGmtCreated(Date gmtCreated) {
-        this.gmtCreated = gmtCreated;
-    }
-
-    public String getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(String modifier) {
-        this.modifier = modifier;
-    }
-
-    public Date getGmtModified() {
-        return gmtModified;
-    }
-
-    public void setGmtModified(Date gmtModified) {
-        this.gmtModified = gmtModified;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    @Override
-    public String toString() {
-        return "\"id\":" + id + ", \"creator\":\"" + creator + "\", \"gmtCreated\":\"" + gmtCreated + ", modifier=" + modifier
-                + "\", \"gmtModified\":\"" + gmtModified + "\", \"deleted\":" + deleted;
-    }
 
 }
