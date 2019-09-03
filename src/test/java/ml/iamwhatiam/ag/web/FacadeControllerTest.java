@@ -4,6 +4,8 @@ import ml.iamwhatiam.ag.BaseTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -13,6 +15,8 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.annotation.Resource;
 import java.net.URI;
 
+@WebAppConfiguration
+@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/springMvc-servlet.xml"})
 public class FacadeControllerTest extends BaseTest {
 
     @Resource
