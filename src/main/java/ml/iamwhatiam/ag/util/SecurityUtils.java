@@ -45,8 +45,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 安全工具类
@@ -66,9 +65,8 @@ import org.slf4j.LoggerFactory;
  * @author iMinusMinus
  * @since 2017-10-30
  */
+@Slf4j
 public class SecurityUtils {
-
-    private static Logger log = LoggerFactory.getLogger(SecurityUtils.class);
 
     private SecurityUtils() {
 
@@ -213,7 +211,7 @@ public class SecurityUtils {
      *            <li>mode: CBC, ECB;
      *            <li>padding: NoPadding , PKCS5Padding, PKCS1Padding,
      *            OAEPWithSHA-1AndMGF1Padding, OAEPWithSHA-256AndMGF1Padding
-     * @param ciphered base64格式密文
+     * @param ciphertext base64格式密文
      * @param keyt 密钥 base64编码
      * @return
      */

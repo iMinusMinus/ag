@@ -27,8 +27,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import ml.iamwhatiam.ag.domain.ParameterTypeDomain;
+import ml.iamwhatiam.ag.domain.RpcBeanDomain;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -49,26 +50,49 @@ import ml.iamwhatiam.ag.vo.FacadeVO;
  * @author iMinusMinus
  * @since 2017-09-20
  */
+@Slf4j
 public abstract class RpcDispatcherService implements DispatcherService, ApplicationContextAware {
-
-    private static Logger        log = LoggerFactory.getLogger(RpcDispatcherService.class);
 
     protected ApplicationContext applicationContext;
 
     @Resource
     protected ServiceConfigDao   serviceConfig;
-    
+
     /**
-     * 默认注册的bean id为接口类全名，如果不是，子类需要重写此方法
-     * 
-     * @param interfaceName 接口类全名
-     * @param version 服务提供方版本
+     * 获取服务配置
+     * @param interfaceName
+     * @param version
      * @return
      */
-    protected String getBeanName(String interfaceName, String version) {
-    	return interfaceName;
-    }
+    protected abstract RpcBeanDomain getRpcConfig(String interfaceName, String version);
 
+    /**
+     * 泛化调用方法名
+     * @return
+     */
+    protected abstract String getGenericMethodName();
+
+    /**
+     * 泛化调用接口名
+     * @return
+     */
+    protected abstract String getGeneircInterfaceName();
+
+    /**
+     * 泛化调用参数类型
+     * @return
+     */
+    protected abstract Class[] getGenericParameterTypes();
+
+    /**
+     * 生成泛化调用入参
+     * @param methodName
+     * @param parameters
+     * @param parameterTypes
+     * @return
+     */
+    protected abstract Object[] assembleGenericRequest(String methodName, String parameters, List<ParameterTypeDomain> parameterTypes);
+    
     /**
      * 获取配置-->寻找bean-->组装参数-->调用
      * 
@@ -85,41 +109,59 @@ public abstract class RpcDispatcherService implements DispatcherService, Applica
             log.error("服务[{}]未配置", request.getService());
             throw new InsufficientConfigurationException();
         }
-
-        String beanName = getBeanName(method.getInterfaceName(), request.getVersion());
-        Object bean = applicationContext.getBean(beanName);
-
-        String[] parameterTypes = new String[0];
+        String methodName = method.getMethodName();
+        String interfaceName = method.getInterfaceName();
+        Class[] parameterTypes = new Class[0];
         Object[] args = new Object[0];
-        if (method.getParameters() != null && method.getParameters().size() > 0) {
-            parameterTypes = new String[method.getParameters().size()];
+
+        RpcBeanDomain rpcConfig = getRpcConfig(method.getInterfaceName(), request.getVersion());
+        if(rpcConfig == null) {
+            log.error("接口[{}:{}]未配置", method.getInterfaceName(), request.getVersion());
+            throw new InsufficientConfigurationException();
+        }
+
+        Object bean = applicationContext.getBean(rpcConfig.getBeanId());
+        if(request.getParameters() != null && (method.getParameters() == null || method.getParameters().size() == 0)) {
+            log.warn("服务[{}]有入参，但未配置参数类型", request.getService());
+        }
+        if(request.getParameters() == null && method.getParameters() != null && method.getParameters().size() != 0) {
+            throw new RuntimeException("服务[" + request.getService() + "]请求参数确实");
+        }
+        //使用泛化调用，接口、入参、出参class可以不需要在classpath
+        if(rpcConfig.useGeneric()) {
+            methodName = getGenericMethodName();
+            interfaceName = getGeneircInterfaceName();
+            parameterTypes = getGenericParameterTypes();
+            args = assembleGenericRequest(method.getMethodName(), request.getParameters(), method.getParameters());
+        } else if(method.getParameters() != null && method.getParameters().size() != 0){
+            String[] parameTypes = new String[method.getParameters().size()];
             args = new Object[method.getParameters().size()];
             Deserializer deserializer = DeserializerFactory.getDeserializer(request.getFormat());
-            Class<?>[] classes = new Class<?>[method.getParameters().size()];
+            parameterTypes = new Class<?>[method.getParameters().size()];
             for (int i = 0; i < method.getParameters().size(); i++) {
-                parameterTypes[i] = method.getParameters().get(i).getType();
-                classes[i] = ReflectionUtils.findClass(parameterTypes[i]);
+                parameTypes[i] = method.getParameters().get(i).getType();
+                parameterTypes[i] = ReflectionUtils.findClass(parameTypes[i]);
             }
-            if (parameterTypes.length == 1) {//parameter:{}
-                args[0] = deserializer.deserializeObject(request.getParameters(), classes[0]);
+            if (parameTypes.length == 1) {//parameter:{}
+                args[0] = deserializer.deserializeObject(request.getParameters(), parameterTypes[0]);
             } else {//parameter:[]
-                List<Object> data = deserializer.deserializeArray(request.getParameters(), classes);
+                List<Object> data = deserializer.deserializeArray(request.getParameters(), parameterTypes);
                 for (int i = 0; i < data.size(); i++) {
                     args[i] = data.get(i);
                 }
             }
         }
-        processBeforeInvoke(beanName);
+
+        processBeforeInvoke(rpcConfig.getBeanId());
         log.debug("RPC服务[{}]请求参数：{}", request.getService(), args);
         Object result;
         try {
-            result = ReflectionUtils.invoke(method.getMethodName(), method.getInterfaceName(), parameterTypes, bean,
-                    args);
+            result = ReflectionUtils.invoke(methodName, interfaceName, parameterTypes, bean, args);
         } catch (Exception e) {
             throw new RpcInvokingException(e);
         }
         log.debug("RPC服务[{}]返回结果：{}", request.getService(), result);
-        processAfterInvoke(beanName);
+        processAfterInvoke(rpcConfig.getBeanId());
         return result;
     }
 

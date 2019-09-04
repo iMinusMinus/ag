@@ -23,12 +23,18 @@
  */
 package ml.iamwhatiam.ag.service.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import ml.iamwhatiam.ag.dao.HsfConsumerConfigDao;
+import ml.iamwhatiam.ag.domain.HSFSpringConsumerBeanDomain;
+import ml.iamwhatiam.ag.domain.ParameterTypeDomain;
+import ml.iamwhatiam.ag.domain.RpcBeanDomain;
 import org.springframework.beans.factory.BeanFactory;
 
 import ml.iamwhatiam.ag.util.Id;
 import ml.iamwhatiam.ag.util.ReflectionUtils;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 将请求通过服务名找到实际的发布者进行调用
@@ -36,26 +42,50 @@ import ml.iamwhatiam.ag.util.ReflectionUtils;
  * @author liangming
  * @since 2017-09-18
  */
+@Slf4j
 public class HsfDispatcherServiceImpl extends RpcDispatcherService {
 
-    private static Logger  log                = LoggerFactory.getLogger(HsfDispatcherServiceImpl.class);
+    private final String CONTEXT_MDC_METHOD = "setInvokeContextThreadLocal";
 
-    private final String   CONTEXT_MDC_METHOD = "setInvokeContextThreadLocal";
+    private final String CLASS = "com.taobao.hsf.app.spring.util.HSFSpringConsumerBean";
 
-    private final String   CLASS              = "com.taobao.hsf.app.spring.util.HSFSpringConsumerBean";
+    private final Class[] PARAMETER_TYPES = { ThreadLocal.class };
 
-    private final String[] PARAMETER_TYPES    = { "java.lang.ThreadLocal" };
+    @Resource
+    private HsfConsumerConfigDao hsfConsumerConfigDao;
 
+    @Override
     public boolean support(String type) {
-        return "HSF".equalsIgnoreCase(type);
+        return HSFSpringConsumerBeanDomain.HSF.equalsIgnoreCase(type);
     }
     
-    /**
-     * @see ml.iamwhatiam.ag.builder.HsfConsumerBeanBuilder#getBeanName
-     */
     @Override
-    protected String getBeanName(String interfaceName, String version) {
-    	return interfaceName + ":" + version;
+    protected RpcBeanDomain getRpcConfig(String interfaceName, String version) {
+        return hsfConsumerConfigDao.findByInterfaceNameAndVersion(interfaceName, version);
+    }
+
+    @Override
+    protected String getGenericMethodName() {
+        //TODO
+        return null;
+    }
+
+    @Override
+    protected String getGeneircInterfaceName() {
+        //TODO
+        return null;
+    }
+
+    @Override
+    protected Class[] getGenericParameterTypes() {
+        //TODO
+        return new Class[0];
+    }
+
+    @Override
+    protected Object[] assembleGenericRequest(String methodName, String parameters, List<ParameterTypeDomain> parameterTypes) {
+        //TODO
+        return new Object[0];
     }
 
     /**

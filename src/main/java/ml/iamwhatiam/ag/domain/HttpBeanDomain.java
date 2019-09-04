@@ -52,4 +52,9 @@ public class HttpBeanDomain extends RpcBeanDomain {
         return HTTP;
     }
 
+    @Override
+    public String getBeanId() {
+        return interfaceName;
+    }
+
 }

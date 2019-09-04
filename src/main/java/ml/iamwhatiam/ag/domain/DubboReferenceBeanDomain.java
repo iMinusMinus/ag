@@ -46,12 +46,30 @@ public class DubboReferenceBeanDomain extends RpcBeanDomain {
 
 	private static final long serialVersionUID = -3251566072377464696L;
 
+	private static final String NATIVEJAVA = "nativejava";
+
+	private static final String TRUE = "true";
+
+	private static final String BEAN = "bean";
+
 	public static final String DUBBO = "dubbo";
 
 	@Override
 	public String getRpcType() {
 		return DUBBO;
 	}
+
+	@Override
+	public boolean useGeneric() {
+		return NATIVEJAVA.equals(generic) || BEAN.equals(generic) || TRUE.equals(generic);
+	}
+
+	@Override
+	public String getBeanId() {
+		return springBeanId != null ? springBeanId : interfaceName;
+	}
+
+	private String springBeanId;
 	
 	//AbstractMethodConfig
 	/**
@@ -100,8 +118,6 @@ public class DubboReferenceBeanDomain extends RpcBeanDomain {
 	private String cache;
 	
 	//AbstractInterfaceConfig
-	private String beanId;
-	
 	/**
 	 * 服务接口的本地实现类名
 	 */
@@ -189,9 +205,9 @@ public class DubboReferenceBeanDomain extends RpcBeanDomain {
 	private boolean init;
 	
 	/**
-	 * 是否使用泛型接口
+	 * 是否使用泛型接口,dubbo泛型支持三种序列化方式：nativejava, bean, true
 	 */
-	private boolean generic;
+	private String generic;
 	
 	/**
 	 * 启用或禁用集群session粘滞

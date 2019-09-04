@@ -43,12 +43,19 @@ public abstract class RpcBeanDomain extends BaseDomain {
     /**
      * 接口完整类名
      */
-    protected String          interfaceName;
+    protected String interfaceName;
 
     /**
      * 接口版本
      */
-    protected String          version;
+    protected String version;
+
+    /**
+     * 泛化调用，默认启用
+     */
+    public boolean useGeneric() {
+        return true;
+    }
 
     /**
      * 获取RPC类型
@@ -57,5 +64,11 @@ public abstract class RpcBeanDomain extends BaseDomain {
      * @return RPC类型
      */
     public abstract String getRpcType();
+
+    /**
+     * 获取beanId
+     * @return
+     */
+    public abstract String getBeanId();
 
 }

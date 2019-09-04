@@ -27,6 +27,12 @@ import javax.annotation.Resource;
 
 import ml.iamwhatiam.ag.dao.DubboReferenceConfigDao;
 import ml.iamwhatiam.ag.domain.DubboReferenceBeanDomain;
+import ml.iamwhatiam.ag.domain.ParameterTypeDomain;
+import ml.iamwhatiam.ag.domain.RpcBeanDomain;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 将请求处理转发到Dubbbo提供方
@@ -36,7 +42,19 @@ import ml.iamwhatiam.ag.domain.DubboReferenceBeanDomain;
  */
 
 public class DubboDispatcherServiceImpl extends RpcDispatcherService {
-	
+
+	/**
+	 * 泛化调用方法名
+	 * @see com.alibaba.dubbo.rpc.service.GenericService#$invoke(java.lang.String, java.lang.String[], java.lang.Object[])
+	 */
+	private static final String GENERIC_METHOD_NAME = "$invoke";
+
+	private static final String GENERIC_INTERFACE_NAME = "com.alibaba.dubbo.rpc.service.GenericService";
+
+	private static final Class[] GENERIC_PARAMETER_TYPES = {String.class, String[].class, Object[].class};
+
+	private static final String CLASS = "class";
+
 	@Resource
 	private DubboReferenceConfigDao dubboConfig;
 
@@ -49,25 +67,46 @@ public class DubboDispatcherServiceImpl extends RpcDispatcherService {
 	public boolean support(String type) {
 		return DubboReferenceBeanDomain.DUBBO.equalsIgnoreCase(type);
 	}
-	
-	/**
-	 * @see ml.iamwhatiam.ag.builder.DubboReferenceBeanBuilder#getBeanName
-	 */
+
+
 	@Override
-	protected String getBeanName(String interfaceName, String version) {
-		DubboReferenceBeanDomain domain = dubboConfig.findByInterfaceNameAndVersion(interfaceName, version);
-		if(domain != null && domain.getBeanId() != null && domain.getBeanId().length() > 0) {
-			return domain.getBeanId();
+	protected RpcBeanDomain getRpcConfig(String interfaceName, String version) {
+		return dubboConfig.findByInterfaceNameAndVersion(interfaceName, version);
+	}
+
+	@Override
+	protected String getGenericMethodName() {
+		return GENERIC_METHOD_NAME;
+	}
+
+	@Override
+	protected String getGeneircInterfaceName() {
+		return GENERIC_INTERFACE_NAME;
+	}
+
+	@Override
+	protected Class[] getGenericParameterTypes() {
+		return GENERIC_PARAMETER_TYPES;
+	}
+
+	@Override
+	protected Object[] assembleGenericRequest(String methodName, String parameters, List<ParameterTypeDomain> parameterTypes) {
+		Object[] args = new Object[3];
+		args[0] = methodName;
+		String[] types = new String[parameterTypes.size()];
+		for(int i = 0; i < parameterTypes.size(); i++) {
+			types[i] = parameterTypes.get(0).getType();
 		}
-    	return interfaceName;
-    }
-
-	public DubboReferenceConfigDao getDubboConfig() {
-		return dubboConfig;
+		args[1] = types;
+		Object[] params = new Object[types.length];
+		//TODO parameters
+		for(int i = 0; i < parameterTypes.size(); i++) {
+			Map<String, Object> param = new HashMap<>();
+			param.put(CLASS, parameterTypes.get(0).getType());
+//			param.putAll();
+			params[i] = param;
+		}
+		args[2] = params;
+		return args;
 	}
-
-	public void setDubboConfig(DubboReferenceConfigDao dubboConfig) {
-		this.dubboConfig = dubboConfig;
-	}
-
 }

@@ -1,8 +1,9 @@
 CREATE TABLE `dubbo_reference_bean` (
                                       `id` BIGINT NOT NULL AUTO_INCREMENT,
-                                      `bean_id` VARCHAR(32) NULL COMMENT 'spring bean id',
+                                      `spring_bean_id` VARCHAR(32) NULL COMMENT 'spring bean id',
                                       `interface_name` VARCHAR(128) NOT NULL COMMENT '接口名称',
                                       `provider_version` VARCHAR(8) NULL COMMENT '接口版本',
+                                      `generic` TINYINT(1) NOT NULL DEFAULT '1' COMMENT '泛化调用',
                                       `check_provider_avaliable` TINYINT NOT NULL DEFAULT '0' COMMENT '启动时检查服务是否存在',
                                       `creator` VARCHAR(8) NOT NULL DEFAULT 'system',
                                       `gmt_create` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

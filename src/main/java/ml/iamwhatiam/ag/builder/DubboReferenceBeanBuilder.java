@@ -55,6 +55,7 @@ public class DubboReferenceBeanBuilder extends StubBeanBuilder {
 	private final String GROUP_ATTR = "group";
 	private final String CHECK_ATTR = "check";
 	private final String ID = "id";
+	private final String GENERIC = "generic";
 
 	@Override
 	protected List<? extends RpcBeanDomain> loadDefinition() {
@@ -63,18 +64,6 @@ public class DubboReferenceBeanBuilder extends StubBeanBuilder {
 		return list;
 	}
 	
-	/**
-	 * @see com.alibaba.dubbo.config.spring.schema.DubboBeanDefinitionParser#parse(Element, ParserContext, Class, boolean)
-	 */
-	@Override
-	protected String getBeanName(RpcBeanDomain beanDefintion) {
-		DubboReferenceBeanDomain dubboBean = (DubboReferenceBeanDomain) beanDefintion;
-		if(dubboBean.getBeanId() != null && dubboBean.getBeanId().length() > 0) {
-			return dubboBean.getBeanId();
-		}
-    	return beanDefintion.getInterfaceName();
-    }
-
 	/**
 	 * 构建Dubbo ReferenceBean
 	 * @param beanDefintion
@@ -86,15 +75,15 @@ public class DubboReferenceBeanBuilder extends StubBeanBuilder {
 		builder.setLazyInit(false);
 		builder.addPropertyValue(INTERFACE_ATTR, dubboBean.getInterfaceName());
 		builder.addPropertyValue(CHECK_ATTR, dubboBean.isCheck());
-		builder.addPropertyValue(ID, dubboBean.getInterfaceName());
+		builder.addPropertyValue(ID, dubboBean.getBeanId());
 		if(dubboBean.getGroup() != null && dubboBean.getGroup().length() > 0) {
 			builder.addPropertyValue(GROUP_ATTR, dubboBean.getGroup());
 		}
 		if(dubboBean.getVersion() != null && dubboBean.getVersion().length() > 0) {
 			builder.addPropertyValue(VERSION_ATTR, dubboBean.getVersion());
 		}
-		if(dubboBean.getBeanId() != null && dubboBean.getBeanId().length() > 0) {
-			builder.addPropertyValue(ID, dubboBean.getBeanId());
+		if(dubboBean.getGeneric() != null) {
+			builder.addPropertyValue(GENERIC, dubboBean.getGeneric());
 		}
 		//add other property here
 		return builder;

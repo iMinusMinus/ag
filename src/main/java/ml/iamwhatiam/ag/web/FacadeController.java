@@ -35,10 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import ml.iamwhatiam.ag.vo.ChaosVO;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import ml.iamwhatiam.ag.vo.FacadeVO;
 import ml.iamwhatiam.ag.vo.ResultWrapper;
@@ -72,7 +69,7 @@ public class FacadeController {
     public void invoke(@PathVariable("appId") String appId, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String charset = request.getCharacterEncoding();
         String contentType = request.getContentType();
-        ChaosVO vo = new ChaosVO();
+        ChaosVO req = new ChaosVO();
         //查询配置，提取、转换参数
         Enumeration<String> headerNamess = request.getHeaderNames();
         Map<String, Object> headers = new HashMap<>();
@@ -86,10 +83,10 @@ public class FacadeController {
             String[] hval = new String[tmp.size()];
             headers.put(header, tmp.size() == 1 ? tmp.get(0) : tmp.toArray(hval));
         }
-        vo.setHeaders(headers);
+        req.setHeaders(headers);
         String path = request.getRequestURI().substring(request.getContextPath() == null ? 1 : request.getContextPath().length() + 1);
         String[] paths = path.split("/");
-        vo.setPaths(paths);
+        req.setPaths(paths);
         String qs = request.getQueryString();
         if(qs != null) {
             String[] pairs = qs.split("&");
@@ -98,7 +95,7 @@ public class FacadeController {
                 String[] kv = pairs[i].split("=");
                 urlParams.put(kv[0], kv[1]);
             }
-            vo.setQueryString(urlParams);
+            req.setQueryString(urlParams);
         }
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         InputStream is = request.getInputStream();
@@ -106,10 +103,21 @@ public class FacadeController {
         while((val = is.read()) != -1) {
             baos.write(val);
         }
-        vo.setBody(baos.toString(charset));
+        req.setBody(baos.toString(charset));
 
-//        response.addHeader();
-//        response.getOutputStream().write();
+        ChaosVO resp = new ChaosVO();//FIXME
+        if(resp.getHeaders() != null) {
+            for (Map.Entry<String, Object> header : resp.getHeaders().entrySet()) {
+                if (header.getValue() instanceof String) {
+                    response.addHeader(header.getKey(), (String) header.getValue());
+                } else {
+                    throw new RuntimeException("header value type must be string");
+                }
+            }
+        }
+        if(resp.getBody() != null) {
+            response.getOutputStream().write(resp.getBody().getBytes());
+        }
     }
 
     /**
@@ -118,17 +126,12 @@ public class FacadeController {
      * @param br
      * @return
      */
-    @RequestMapping("/ag")
+    @RequestMapping("/")
     @ResponseBody
-    @ExceptionHandler
-    public ResultWrapper<Object> invoke(@Valid FacadeVO req, BindingResult br) {
+    public ResultWrapper<Object> invoke(@Valid @RequestBody FacadeVO req, BindingResult br) {
         log.debug("request parameters: {}", req);
         ResultWrapper<Object> result = new ResultWrapper<Object>();
-        if(br.hasErrors()) {
-        	result.setStatus(ResultWrapper.CLIENT_ERROR);
-        	result.setMessage(br.toString());
-        	return result;
-        }
+
 //        DispatcherExecutionChain chain = adapter.getDispatcherExecutionChain(req);
 //        DispatcherService dispatcher = chain.getDispatcher();
 //        List<DispatcherInterceptor> inteceptors = chain.getInterceptors();

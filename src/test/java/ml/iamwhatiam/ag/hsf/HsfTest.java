@@ -25,12 +25,11 @@ package ml.iamwhatiam.ag.hsf;
 
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 //import com.taobao.hsf.hsfunit.HSFEasyStarter;
 //import com.taobao.itest.ITestSpringContextBaseCase;
@@ -47,9 +46,8 @@ import ml.iamwhatiam.ag.vo.FacadeVO;
  * @since 2017-09-08
  */
 /*@ITestSpringContext({ "file:src/main/webapp/WEB-INF/applicationContext.xml", "file:src/main/webapp/WEB-INF/springMvc-servlet.xml" })*/
+@Slf4j
 public class HsfTest /*extends ITestSpringContextBaseCase*/ {
-
-    private Logger log = LoggerFactory.getLogger(HsfTest.class);
 
 //    static {
 //        String path = System.getProperty("hsf.sar.path");
@@ -82,6 +80,7 @@ public class HsfTest /*extends ITestSpringContextBaseCase*/ {
     }
 
     @Test
+    @Ignore
     public void testQueryUserInfoByHttp() {
         Object result = hsfHttp.doDispatch(request);
         log.info("http response: {}", result);

@@ -77,17 +77,10 @@ public class ReflectionUtils {
      * @param args 参数
      * @return 方法调用结果
      */
-    public static Object invoke(String methodName, String klazz, String[] parameterTypes, Object target,
+    public static Object invoke(String methodName, String klazz, Class[] parameterTypes, Object target,
                                 Object... args) {
         Class<?> klz = findClass(klazz);
-        Class<?>[] types = new Class<?>[0];
-        if (parameterTypes != null && parameterTypes.length > 0) {
-            types = new Class<?>[parameterTypes.length];
-            for (int i = 0; i < parameterTypes.length; i++) {
-                types[i] = findClass(parameterTypes[i]);
-            }
-        }
-        Method method = findAccessibleMethod(methodName, klz, types);
+        Method method = findAccessibleMethod(methodName, klz, parameterTypes);
         return invoke(method, target, args);
     }
 

@@ -53,6 +53,11 @@ public class HSFSpringConsumerBeanDomain extends RpcBeanDomain {
         return HSF;
     }
 
+    @Override
+    public String getBeanId() {
+        return interfaceName + ":" + version;
+    }
+
     /**
      * 服务所属的组
      */
