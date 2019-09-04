@@ -89,6 +89,19 @@ public class DubboDispatcherServiceImpl extends RpcDispatcherService {
 		return GENERIC_PARAMETER_TYPES;
 	}
 
+	/**
+	 * dubbo泛化引用参数处理
+	 * <ul>
+	 *     <li>nativejava</li>byte[]
+	 *     <li>true</li>
+	 *     <li>bean</li>JavaBeanDescriptor
+	 * </ul>
+	 * @see com.alibaba.dubbo.rpc.filter.GenericFilter#invoke(com.alibaba.dubbo.rpc.Invoker, com.alibaba.dubbo.rpc.Invocation)
+	 * @param methodName
+	 * @param parameters
+	 * @param parameterTypes
+	 * @return
+	 */
 	@Override
 	protected Object[] assembleGenericRequest(String methodName, String parameters, List<ParameterTypeDomain> parameterTypes) {
 		Object[] args = new Object[3];
