@@ -28,6 +28,7 @@ import ml.iamwhatiam.ag.dao.HsfConsumerConfigDao;
 import ml.iamwhatiam.ag.domain.HSFSpringConsumerBeanDomain;
 import ml.iamwhatiam.ag.domain.ParameterTypeDomain;
 import ml.iamwhatiam.ag.domain.RpcBeanDomain;
+import ml.iamwhatiam.ag.support.Deserializer;
 import org.springframework.beans.factory.BeanFactory;
 
 import ml.iamwhatiam.ag.util.Id;
@@ -83,7 +84,7 @@ public class HsfDispatcherServiceImpl extends RpcDispatcherService {
     }
 
     @Override
-    protected Object[] assembleGenericRequest(String methodName, String parameters, List<ParameterTypeDomain> parameterTypes) {
+    protected Object[] assembleGenericRequest(String methodName, String parameters, List<ParameterTypeDomain> parameterTypes, Deserializer deserializer) {
         //TODO
         return new Object[0];
     }

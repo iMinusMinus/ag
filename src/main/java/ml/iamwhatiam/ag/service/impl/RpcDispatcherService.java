@@ -91,7 +91,7 @@ public abstract class RpcDispatcherService implements DispatcherService, Applica
      * @param parameterTypes
      * @return
      */
-    protected abstract Object[] assembleGenericRequest(String methodName, String parameters, List<ParameterTypeDomain> parameterTypes);
+    protected abstract Object[] assembleGenericRequest(String methodName, String parameters, List<ParameterTypeDomain> parameterTypes, Deserializer deserializer);
     
     /**
      * 获取配置-->寻找bean-->组装参数-->调用
@@ -127,28 +127,24 @@ public abstract class RpcDispatcherService implements DispatcherService, Applica
         if(request.getParameters() == null && method.getParameters() != null && method.getParameters().size() != 0) {
             throw new RuntimeException("服务[" + request.getService() + "]请求参数确实");
         }
+        Deserializer deserializer = DeserializerFactory.getDeserializer(request.getFormat());
         //使用泛化调用，接口、入参、出参class可以不需要在classpath
         if(rpcConfig.useGeneric()) {
             methodName = getGenericMethodName();
             interfaceName = getGeneircInterfaceName();
             parameterTypes = getGenericParameterTypes();
-            args = assembleGenericRequest(method.getMethodName(), request.getParameters(), method.getParameters());
+            args = assembleGenericRequest(method.getMethodName(), request.getParameters(), method.getParameters(), deserializer);
         } else if(method.getParameters() != null && method.getParameters().size() != 0){
             String[] parameTypes = new String[method.getParameters().size()];
-            args = new Object[method.getParameters().size()];
-            Deserializer deserializer = DeserializerFactory.getDeserializer(request.getFormat());
             parameterTypes = new Class<?>[method.getParameters().size()];
             for (int i = 0; i < method.getParameters().size(); i++) {
                 parameTypes[i] = method.getParameters().get(i).getType();
                 parameterTypes[i] = ReflectionUtils.findClass(parameTypes[i]);
             }
             if (parameTypes.length == 1) {//parameter:{}
-                args[0] = deserializer.deserializeObject(request.getParameters(), parameterTypes[0]);
+                args = new Object[]{deserializer.deserializeObject(request.getParameters(), parameterTypes[0])};
             } else {//parameter:[]
-                List<Object> data = deserializer.deserializeArray(request.getParameters(), parameterTypes);
-                for (int i = 0; i < data.size(); i++) {
-                    args[i] = data.get(i);
-                }
+                args = deserializer.deserializeArray(request.getParameters(), parameterTypes);
             }
         }
 

@@ -24,11 +24,12 @@
 package ml.iamwhatiam.ag.support;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.util.TypeUtils;
+import ml.iamwhatiam.ag.util.ReflectionUtils;
 
 /**
  * 使用JSON进行反序列化
@@ -47,16 +48,24 @@ public class JsonDeserializer implements Deserializer {
      * @see ml.iamwhatiam.ag.support.Deserializer#deserialize(java.lang.String,
      * java.lang.Class)
      */
+    @Override
     public <T> T deserializeObject(String data, Type type) {
-        return JSONObject.parseObject(data, type);//FIXME
+        return JSON.parseObject(data, type);//FIXME
     }
 
-    public List<Object> deserializeArray(String data, Type[] types) {
-        List<Object> objects = new ArrayList<Object>();
-        JSONArray array = JSONObject.parseArray(data);
+    @Override
+    public Object[] deserializeArray(String data, Type[] types) {
+        Object[] objects = new Object[types.length];
+        JSONArray array = JSON.parseArray(data);
         for (int i = 0; i < types.length; i++) {
             //TODO
-            objects.add(deserializeObject(array.getString(i), types[i]));
+            if(types[i] instanceof Class && (((Class) types[i]).isArray()) || Collection.class.isAssignableFrom((Class) types[i])) {
+                objects[i] = array.getJSONArray(i);
+            } else if(types[i] instanceof Class && !ReflectionUtils.isJavaBean((Class) types[i])) {
+                objects[i] = TypeUtils.cast(array.getString(i), types[i], null);
+            } else {
+                objects[i] = deserializeObject(array.getString(i), types[i]);
+            }
         }
         return objects;
     }

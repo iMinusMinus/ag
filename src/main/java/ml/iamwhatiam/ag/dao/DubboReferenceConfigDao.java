@@ -37,10 +37,9 @@ import ml.iamwhatiam.ag.domain.DubboReferenceBeanDomain;
  * @author iMinusMinus
  * @since 2017-11-04
  */
-
 public interface DubboReferenceConfigDao extends RpcConfigDao {
 	
-	@Select("SELECT * FROM dubbo_reference_bean")
+	@Select("SELECT id,spring_bean_id,interface_name,provider_version,check_provider_avaliable,generic FROM dubbo_reference_bean")
 	@Results({
 		@Result(column = "id", property = "id"),
 		@Result(column = "spring_bean_id", property = "springBeanId"),
@@ -52,7 +51,7 @@ public interface DubboReferenceConfigDao extends RpcConfigDao {
 	@Override
 	List<DubboReferenceBeanDomain> load();
 	
-	@Select("SELECT * FROM dubbo_reference_bean WHERE interface_name = #{0} AND provider_version = #{1}")
+	@Select("SELECT id,spring_bean_id,interface_name,provider_version,check_provider_avaliable,generic FROM dubbo_reference_bean WHERE interface_name = #{0} AND provider_version = #{1}")
 	@Results({
 		@Result(column = "id", property = "id"),
 		@Result(column = "spring_bean_id", property = "springBeanId"),

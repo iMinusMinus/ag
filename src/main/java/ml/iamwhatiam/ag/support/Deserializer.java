@@ -50,6 +50,6 @@ public interface Deserializer {
      * @param classes 类型数组
      * @return
      */
-    public List<Object> deserializeArray(String data, Type[] classes);
+    public Object[] deserializeArray(String data, Type[] classes);
 
 }

@@ -31,6 +31,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -77,8 +78,7 @@ public class ReflectionUtils {
      * @param args 参数
      * @return 方法调用结果
      */
-    public static Object invoke(String methodName, String klazz, Class[] parameterTypes, Object target,
-                                Object... args) {
+    public static Object invoke(String methodName, String klazz, Class[] parameterTypes, Object target, Object[] args) {
         Class<?> klz = findClass(klazz);
         Method method = findAccessibleMethod(methodName, klz, parameterTypes);
         return invoke(method, target, args);
@@ -92,14 +92,10 @@ public class ReflectionUtils {
      * @param args 参数
      * @return 方法调用结果
      */
-    public static Object invoke(Method method, Object target, Object... args) {
+    public static Object invoke(Method method, Object target, Object[] args) {
         Object obj = target;
         try {
-            if (!method.isAccessible()) {
-                log.debug("method [{}.{}] cann't access under class '{}'", method.getDeclaringClass(), method.getName(),
-                        target instanceof Class ? target : target.getClass());
-                method.setAccessible(true);
-            }
+            method.setAccessible(true);
             if ((method.getModifiers() & Modifier.STATIC) != 0) {
                 obj = method.getDeclaringClass();
             }
@@ -194,6 +190,22 @@ public class ReflectionUtils {
             self = self.getSuperclass();
         } while (self.getSuperclass() != Object.class);
         return maybeMethods;
+    }
+
+    public static boolean isJavaBean(Class<?> klazz) {
+        boolean primitive = klazz.isPrimitive();
+        if(primitive) {
+            return false;
+        }
+        boolean wrapper = Number.class.isAssignableFrom(klazz) || Date.class.isAssignableFrom(klazz)
+                || Boolean.class == klazz || klazz == Character.class || klazz == String.class;
+        if(wrapper) {
+            return false;
+        }
+        if(klazz.isArray()) {
+            return isJavaBean(klazz.getComponentType());
+        }
+        return true;
     }
 
     private static boolean isCompitable(Class<?>[] origin, Class<?>[] compare) {

@@ -113,7 +113,6 @@ public abstract class HttpDispatcherService implements DispatcherService {
         Object[] argsObjects = new Object[0];
         if (parameterTypes != null && parameterTypes.size() > 0) {
             argsTypes = new String[parameterTypes.size()];
-            argsObjects = new Object[parameterTypes.size()];
             Class<?>[] classes = new Class<?>[parameterTypes.size()];
             Deserializer deserializer = DeserializerFactory.getDeserializer(format);
             for (int i = 0; i < parameterTypes.size(); i++) {
@@ -121,12 +120,9 @@ public abstract class HttpDispatcherService implements DispatcherService {
                 classes[i] = ReflectionUtils.findClass(argsTypes[i]);
             }
             if (parameterTypes.size() == 1) {
-                argsObjects[0] = deserializer.deserializeObject(parameters, classes[0]);
+                argsObjects = new Object[] {deserializer.deserializeObject(parameters, classes[0])};
             } else {
-                List<Object> data = deserializer.deserializeArray(parameters, classes);
-                for (int i = 0; i < data.size(); i++) {
-                    argsObjects[i] = data.get(i);
-                }
+                argsObjects = deserializer.deserializeArray(parameters, classes);
             }
         }
         req.setParameterTypes(argsTypes);

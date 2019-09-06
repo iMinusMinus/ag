@@ -29,8 +29,10 @@ import ml.iamwhatiam.ag.dao.DubboReferenceConfigDao;
 import ml.iamwhatiam.ag.domain.DubboReferenceBeanDomain;
 import ml.iamwhatiam.ag.domain.ParameterTypeDomain;
 import ml.iamwhatiam.ag.domain.RpcBeanDomain;
+import ml.iamwhatiam.ag.support.Deserializer;
+import ml.iamwhatiam.ag.util.ReflectionUtils;
 
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -93,7 +95,7 @@ public class DubboDispatcherServiceImpl extends RpcDispatcherService {
 	 * dubbo泛化引用参数处理
 	 * <ul>
 	 *     <li>nativejava</li>byte[]
-	 *     <li>true</li>
+	 *     <li>true</li>[{"class":"java.bean"},"ENUM", {"class":"enum", "name":"INSTANCE"}, primitive]
 	 *     <li>bean</li>JavaBeanDescriptor
 	 * </ul>
 	 * @see com.alibaba.dubbo.rpc.filter.GenericFilter#invoke(com.alibaba.dubbo.rpc.Invoker, com.alibaba.dubbo.rpc.Invocation)
@@ -103,23 +105,39 @@ public class DubboDispatcherServiceImpl extends RpcDispatcherService {
 	 * @return
 	 */
 	@Override
-	protected Object[] assembleGenericRequest(String methodName, String parameters, List<ParameterTypeDomain> parameterTypes) {
+	protected Object[] assembleGenericRequest(String methodName, String parameters, List<ParameterTypeDomain> parameterTypes, Deserializer deserializer) {
 		Object[] args = new Object[3];
 		args[0] = methodName;
 		String[] types = new String[parameterTypes.size()];
+		Class[] classes = new Class[parameterTypes.size()];
 		for(int i = 0; i < parameterTypes.size(); i++) {
-			types[i] = parameterTypes.get(0).getType();
+			types[i] = parameterTypes.get(i).getType();
+			Class<?> klazz = ReflectionUtils.findClass(types[i]);
+			if(klazz != null && (klazz.isArray() || Collection.class.isAssignableFrom(klazz))) {
+				classes[i] = List.class;
+			} else if(klazz != null && (!ReflectionUtils.isJavaBean(klazz)) || klazz == Object.class) {
+				classes[i] = klazz;
+			} else {
+				classes[i] = Map.class;
+			}
 		}
 		args[1] = types;
-		Object[] params = new Object[types.length];
-		//TODO parameters
-		for(int i = 0; i < parameterTypes.size(); i++) {
-			Map<String, Object> param = new HashMap<>();
-			param.put(CLASS, parameterTypes.get(0).getType());
-//			param.putAll();
-			params[i] = param;
+		if(parameterTypes.size() == 0) {
+			args[2] = new Object[0];
+			return args;
 		}
-		args[2] = params;
+		if(parameterTypes.size() == 1) {
+			args[2] = new Object[]{deserializer.deserializeObject(parameters, classes[0])};
+		} else {
+			args[2] = deserializer.deserializeArray(parameters, classes);
+		}
+		for(int i = 0; i < parameterTypes.size(); i++) {
+			Object param = ((Object[]) args[2])[i];
+			Class<?> klazz = ReflectionUtils.findClass(parameterTypes.get(i).getType());
+			if(param instanceof Map && (klazz == null || ReflectionUtils.isJavaBean(klazz))) {
+				((Map) param).put(CLASS, parameterTypes.get(i).getType());
+			}
+		}
 		return args;
 	}
 }
